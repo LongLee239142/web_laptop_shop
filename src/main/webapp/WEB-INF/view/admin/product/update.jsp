@@ -69,13 +69,26 @@
                                                     <label class="form-label">Quantity:</label>
                                                     <form:input type="text" class="form-control" path="quantity" />
                                                 </div>
-                                                <div class="mb-3 col-12">
+                                                <div class="mb-3 col-12 col-md-6">
                                                     <label class="form-label">Factory:</label>
-                                                    <form:input type="text" class="form-control" path="factory" />
+                                                    <form:select class="form-select" path="factory">
+                                                        <form:option value="Apple">Apple(MacBook)</form:option>
+                                                        <form:option value="Asus">Asus</form:option>
+                                                        <form:option value="Lenovo">Lenovo</form:option>
+                                                        <form:option value="Dell">Dell</form:option>
+                                                        <form:option value="LG">LG</form:option>
+                                                        <form:option value="Acer">Acer</form:option>
+                                                    </form:select>
                                                 </div>
-                                                <div class="mb-3 col-12">
+                                                <div class="mb-3 col-12 col-md-6">
                                                     <label class="form-label">Target:</label>
-                                                    <form:input type="text" class="form-control" path="target" />
+                                                    <form:select class="form-select" path="target">
+                                                        <form:option value="Gaming">Gaming</form:option>
+                                                        <form:option value="StudentOffice">Student Office</form:option>
+                                                        <form:option value="GraphicDesign">Graphic Design</form:option>
+                                                        <form:option value="ThinAndLight">Thin And Light</form:option>
+                                                        <form:option value="Business">Business</form:option>
+                                                    </form:select>
                                                 </div>
 
                                                 <div class="mb-3 col-12 col-md-6">

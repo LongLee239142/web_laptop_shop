@@ -1,11 +1,14 @@
 package vn.hoidanit.laptopshop.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -18,18 +21,22 @@ public class Product {
     @Size(min = 2, message = "Name Product cannot be empty")
     private String name;
 
-    @DecimalMin(value = "0", inclusive = false, message = "Price must be greater than 0")
+    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than zero")
+    @NotNull(message = "Price cannot be null")
     private double price;
 
     private String image;
 
-    @Size(min = 2, message = " Cannot be empty")
+    @NotNull
+    @NotEmpty(message = "Cannot be empty")
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String detailDesc;
 
     @Size(min = 2, message = " Cannot be empty")
     private String shortDesc;
 
-    @DecimalMin(value = "0", inclusive = false, message = "Quantity must be greater than 0")
+    @NotNull(message = "Quantity cannot be null")
+    @DecimalMin(value = "0", inclusive = false, message = "Quantity must be greater than zero")
     private long quantity;
 
     private long sold;

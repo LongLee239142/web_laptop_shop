@@ -93,8 +93,17 @@ public class UserController {
     }
 
     @PostMapping("/admin/user/update")
-    public String postUpdateUser(Model model, @ModelAttribute("newUser") User hoidanit,
+    public String postUpdateUser(Model model, @ModelAttribute("newUser") @Valid User hoidanit,
+            BindingResult newUserBindingResult,
             @RequestParam("hoidanitFile") MultipartFile file) {
+        List<FieldError> errors = newUserBindingResult.getFieldErrors();
+        for (FieldError error : errors) {
+            System.out.println(">>>>>>>" + error.getField() + " - " + error.getDefaultMessage());
+        }
+        // validate
+        if (newUserBindingResult.hasErrors()) {
+            return "/admin/user/update";
+        }
         String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
         User currentUser = this.userService.getUserById(hoidanit.getId());
         if (currentUser != null) {

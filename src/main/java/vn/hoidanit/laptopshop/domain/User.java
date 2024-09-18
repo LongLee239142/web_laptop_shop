@@ -11,8 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Entity
@@ -22,19 +21,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotNull
-    @Email
+    @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
     private String email;
 
-    @NotNull
-    @Min(2)
+    @Size(min = 2, message = "Password must be more than 2 character")
     private String password;
 
-    @NotNull
-    @Min(2)
+    @Size(min = 2, message = "Full Name must be more than 2 characters")
     private String fullName;
 
+    @Size(min = 1, message = "Invalid address")
     private String address;
+
+    @Pattern(regexp = "^0\\d{9,10}$", message = "Invalid phone number")
     private String phone;
 
     private String avatar;

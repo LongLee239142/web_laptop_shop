@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -78,16 +79,23 @@ public class ProductController {
 
     @PostMapping("/admin/product/update")
     public String postUpdateUser(Model model, @ModelAttribute("newProduct") Product hoidanit,
+            BindingResult newProductBindingResult,
             @RequestParam("hoidanitFileProduct") MultipartFile file) {
-        String imageProduct = this.uploadService.handleSaveUploadFile(file, "imageProduct");
+        if (newProductBindingResult.hasErrors()) {
+            return "admin/product/update";
+        }
+
         Product currentProduct = this.productService.getProductById(hoidanit.getId());
         if (currentProduct != null) {
+            if (!file.isEmpty()) {
+                String img = this.uploadService.handleSaveUploadFile(file, "imageProduct");
+                currentProduct.setImage(img);
+            }
             currentProduct.setPrice(hoidanit.getPrice());
             currentProduct.setFactory(hoidanit.getFactory());
             currentProduct.setName(hoidanit.getName());
             currentProduct.setDetailDesc(hoidanit.getDetailDesc());
             currentProduct.setQuantity(hoidanit.getQuantity());
-            currentProduct.setImage(imageProduct);
             currentProduct.setTarget(hoidanit.getTarget());
             currentProduct.setSold(hoidanit.getSold());
             currentProduct.setShortDesc(hoidanit.getShortDesc());

@@ -36,6 +36,8 @@
                                         <hr />
 
                                         <div class="card" style="width: 60%">
+                                            <img class="card-img-top" src="/images/imageProduct/${product.image}"
+                                                alt="Card Image cap">
                                             <div class="card-header">
                                                 Product information
                                             </div>

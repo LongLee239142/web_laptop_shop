@@ -18,7 +18,8 @@ public class RegisterDTO {
 
     private String password;
 
-    @StrongPassword
+    // @StrongPassword
+    @Size(min = 3, message = "Password must have a minimum of 3 characters ")
     private String confirmPassword;
 
     public String getFirstName() {

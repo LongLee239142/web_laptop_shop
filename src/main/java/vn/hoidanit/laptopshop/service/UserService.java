@@ -30,9 +30,9 @@ public class UserService {
     }
 
     public User handleSaveUser(User user) {
-        User eric = this.userRepository.save(user);
-        System.out.println(eric);
-        return eric;
+        User mrLong = this.userRepository.save(user);
+        System.out.println(mrLong);
+        return mrLong;
     }
 
     public User getUserById(long id) {
@@ -57,5 +57,9 @@ public class UserService {
 
     public boolean checkEmailExist(String email) {
         return this.userRepository.existsByEmail(email);
+    }
+
+    public User getUserByEmail(String email) {
+        return this.userRepository.findByEmail(email);
     }
 }

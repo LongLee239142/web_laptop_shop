@@ -8,12 +8,22 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
+import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 public class CustomSuccessHandler implements AuthenticationSuccessHandler {
+    protected void clearAuthenticationAttributes(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        if (session == null) {
+            return;
+        }
+        session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+    }
+
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     protected String determineTargetUrl(final Authentication authentication) {
@@ -37,13 +47,13 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
         String targetUrl = determineTargetUrl(authentication);
-
         if (response.isCommitted()) {
 
             return;
         }
 
         redirectStrategy.sendRedirect(request, response, targetUrl);
+        clearAuthenticationAttributes(request);
     }
 
 }

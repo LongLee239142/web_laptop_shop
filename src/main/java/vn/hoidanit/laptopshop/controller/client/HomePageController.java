@@ -39,7 +39,7 @@ public class HomePageController {
     public String getHomePage(Model model, HttpServletRequest request) {
         List<Product> products = this.productService.getAllProducts();
         model.addAttribute("products", products);
-        HttpSession session = request.getSession();
+        // HttpSession session = request.getSession();
         return "client/homepage/show";
     }
 

@@ -93,10 +93,6 @@ public class ProductController {
     public String postUpdateUser(Model model, @ModelAttribute("newProduct") @Valid Product hoidanit,
             BindingResult newProductBindingResult,
             @RequestParam("hoidanitFileProduct") MultipartFile file) {
-        List<FieldError> errors = newProductBindingResult.getFieldErrors();
-        for (FieldError error : errors) {
-            System.out.println(">>>>>>>" + error.getField() + " - " + error.getDefaultMessage());
-        }
         if (newProductBindingResult.hasErrors()) {
             return "admin/product/update";
         }

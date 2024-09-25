@@ -39,8 +39,6 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
             session.setAttribute("fullName", user.getFullName());
             session.setAttribute("avatar", user.getAvatar());
         }
-
-        // session.setAttribute("fullName", "Hoi Dan It");
     }
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();

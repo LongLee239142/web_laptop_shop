@@ -66,11 +66,6 @@ public class UserController {
             @ModelAttribute("newUser") @Valid User hoidanit,
             BindingResult newUserBindingResult,
             @RequestParam("hoidanitFile") MultipartFile file) {
-        List<FieldError> errors = newUserBindingResult.getFieldErrors();
-        for (FieldError error : errors) {
-            System.out.println(">>>>>>>" + error.getField() + " - " +
-                    error.getDefaultMessage());
-        }
         // validate
         if (newUserBindingResult.hasErrors()) {
             return "/admin/user/create";
@@ -97,19 +92,17 @@ public class UserController {
     public String postUpdateUser(Model model, @ModelAttribute("newUser") @Valid User hoidanit,
             BindingResult newUserBindingResult,
             @RequestParam("hoidanitFile") MultipartFile file) {
-        List<FieldError> errors = newUserBindingResult.getFieldErrors();
-        for (FieldError error : errors) {
-            System.out.println(">>>>>>>" + error.getField() + " - " + error.getDefaultMessage());
-        }
         // validate
         if (newUserBindingResult.hasErrors()) {
             return "/admin/user/update";
         }
-        String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
         User currentUser = this.userService.getUserById(hoidanit.getId());
         if (currentUser != null) {
+            if (!file.isEmpty()) {
+                String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
+                currentUser.setAvatar(avatar);
+            }
             currentUser.setAddress(hoidanit.getAddress());
-            currentUser.setAvatar(avatar);
             currentUser.setFullName(hoidanit.getFullName());
             currentUser.setPhone(hoidanit.getPhone());
             currentUser.setRole(this.userService.getRoleByName(hoidanit.getRole().getName()));

@@ -13,8 +13,8 @@
                     </button>
                     <div class="collapse navbar-collapse bg-white justify-content-between mx-5" id="navbarCollapse">
                         <div class="navbar-nav">
-                            <a href="/" class="nav-item nav-link active">Trang Chủ</a>
-                            <a href="/products" class="nav-item nav-link">Sản Phẩm</a>
+                            <a href="/" class="nav-item nav-link active">HomePage</a>
+                            <a href="/products" class="nav-item nav-link">Product</a>
 
                         </div>
                         <div class="d-flex m-3 me-0">
@@ -40,8 +40,8 @@
                                                 <c:out value="${sessionScope.fullName}" />
                                             </div>
                                         </li>
-                                        <li><a class="dropdown-item" href="#">Quản lý tài khoản</a></li>
-                                        <li><a class="dropdown-item" href="#">Lịch sử mua hàng</a></li>
+                                        <li><a class="dropdown-item" href="#">Account Management</a></li>
+                                        <li><a class="dropdown-item" href="#">Purchase History</a></li>
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>
@@ -54,7 +54,7 @@
                             </c:if>
                             <c:if test="${ empty pageContext.request.userPrincipal}">
                                 <a href="/login" class="position-relative me-4 my-auto">
-                                    Sign in
+                                    SignIn
                                 </a>
                             </c:if>
                         </div>

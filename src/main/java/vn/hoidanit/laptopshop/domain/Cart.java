@@ -39,7 +39,7 @@ public class Cart {
         this.id = id;
     }
 
-    public long getSum() {
+    public int getSum() {
         return sum;
     }
 

@@ -100,4 +100,20 @@ public class ProductService {
 
         }
     }
+
+    public List<CartDetail> getProductInCart(String email) {
+        User user = this.userService.getUserByEmail(email);
+        if (user != null) {
+            Cart cart = this.cartRepository.findByUser(user);
+            if (cart != null) {
+                List<CartDetail> listProductByCartId = this.cartDetailRepository.findByCartId(cart.getId());
+                return listProductByCartId;
+            } else {
+                List<CartDetail> listProductByCartId = this.cartDetailRepository.findAll();
+                return listProductByCartId;
+            }
+        }
+        return null;
+    }
+
 }

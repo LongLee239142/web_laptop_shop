@@ -1,5 +1,6 @@
 package vn.hoidanit.laptopshop.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,17 +104,12 @@ public class ProductService {
 
     public List<CartDetail> getProductInCart(String email) {
         User user = this.userService.getUserByEmail(email);
-        if (user != null) {
-            Cart cart = this.cartRepository.findByUser(user);
-            if (cart != null) {
-                List<CartDetail> listProductByCartId = this.cartDetailRepository.findByCartId(cart.getId());
-                return listProductByCartId;
-            } else {
-                List<CartDetail> listProductByCartId = this.cartDetailRepository.findAll();
-                return listProductByCartId;
-            }
-        }
-        return null;
+
+        Cart cart = this.cartRepository.findByUser(user);
+
+        List<CartDetail> listProductByCartId = cart == null ? new ArrayList<CartDetail>()
+                : this.cartDetailRepository.findByCartId(cart.getId());
+        return listProductByCartId;
     }
 
 }

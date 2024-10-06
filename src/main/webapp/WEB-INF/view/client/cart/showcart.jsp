@@ -114,8 +114,6 @@
                                                     <fmt:formatNumber type="number"
                                                         value="${cartByUser.quantity * cartByUser.price}" /> đ
                                                 </p>
-                                                <p style="display: none;"
-                                                    value="${ tolPrice = tolPrice + cartByUser.quantity * cartByUser.price}">
                                             </td>
                                             <td>
                                                 <button class="btn btn-md rounded-circle bg-light border mt-4">
@@ -136,7 +134,7 @@
                                         <div class="d-flex justify-content-between mb-4">
                                             <h5 class="mb-0 me-4">Subtotal:</h5>
                                             <p class="mb-0">
-                                                <fmt:formatNumber type="number" value="${tolPrice}" />
+                                                <fmt:formatNumber type="number" value="${totalPrice}" />
                                                 đ
                                             </p>
                                         </div>
@@ -152,7 +150,7 @@
                                         <h5 class="mb-0 ps-4 me-4">Total</h5>
                                         <p class="mb-0 pe-4">
                                             <fmt:formatNumber type="number"
-                                                value="${tolPrice = tolPrice * (1 + 0.03)}" />
+                                                value="${totalPrice = totalPrice * (1 + 0.03)}" />
                                             đ
                                         </p>
                                     </div>

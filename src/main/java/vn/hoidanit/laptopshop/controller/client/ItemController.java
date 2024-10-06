@@ -43,7 +43,12 @@ public class ItemController {
         HttpSession session = request.getSession();
         String email = (String) session.getAttribute("email");
         List<CartDetail> cartByUsers = this.productService.getProductInCart(email);
+        double totalPrice = 0;
+        for (CartDetail cd : cartByUsers) {
+            totalPrice += cd.getPrice() * cd.getQuantity();
+        }
         model.addAttribute("cartByUsers", cartByUsers);
+        model.addAttribute("totalPrice", totalPrice);
         return "client/cart/showcart";
     }
 }

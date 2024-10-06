@@ -70,6 +70,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <c:if test="${ empty cartByUsers}">
+                                        <tr>
+                                            <td colspan="6">
+                                                There are no products in the cart
+                                            </td>
+                                        </tr>
+                                    </c:if>
                                     <c:forEach var="cartByUser" items="${cartByUsers}">
                                         <tr>
                                             <th scope="row">
@@ -80,11 +87,14 @@
                                                 </div>
                                             </th>
                                             <td>
-                                                <p class="mb-0 mt-4">${cartByUser.product.name}</p>
+                                                <p class="mb-0 mt-4">
+                                                    <a href="/product/${cartByUser.product.id}" target="_blank">
+                                                        ${cartByUser.product.name}
+                                                    </a>
+                                                </p>
                                             </td>
                                             <td>
-                                                <p style="font-size: 15px; text-align: center; width: 100%;"
-                                                    class="mb-0 mt-4">
+                                                <p class="mb-0 mt-4">
                                                     <fmt:formatNumber type="number" value="${cartByUser.price}" /> đ
                                                 </p>
 
@@ -99,7 +109,9 @@
                                                     </div>
                                                     <input type="text"
                                                         class="form-control form-control-sm text-center border-0"
-                                                        value="${cartByUser.quantity}">
+                                                        value="${cartByUser.quantity}"
+                                                        data-cart-detail-id="${cartByUser.id}"
+                                                        data-cart-detail-price="${cartByUser.price}">
                                                     <div class="input-group-btn">
                                                         <button
                                                             class="btn btn-sm btn-plus rounded-circle bg-light border">
@@ -109,10 +121,9 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <p style="font-size: 15px; text-align: center; width: 100%;"
-                                                    class="mb-0 mt-4">
+                                                <p class="mb-0 mt-4" data-cart-detail-id="${cartByUser.id}">
                                                     <fmt:formatNumber type="number"
-                                                        value="${cartByUser.quantity * cartByUser.price}" /> đ
+                                                        value="${cartByUser.price * cartByUser.quantity}" /> đ
                                                 </p>
                                             </td>
                                             <td>
@@ -127,38 +138,39 @@
                         </div>
 
                         <div class="mt-5 row g-4 justify-content-start">
-                            <div class="col-12 col-md-8">
-                                <div class="bg-light rounded">
-                                    <div class="p-4">
-                                        <h1 class="display-6 mb-4">Cart <span class="fw-normal">Total</span></h1>
-                                        <div class="d-flex justify-content-between mb-4">
-                                            <h5 class="mb-0 me-4">Subtotal:</h5>
-                                            <p class="mb-0">
-                                                <fmt:formatNumber type="number" value="${totalPrice}" />
+                            <c:if test="${ not empty cartByUsers}">
+                                <div class="col-12 col-md-8">
+                                    <div class="bg-light rounded">
+                                        <div class="p-4">
+                                            <h1 class="display-6 mb-4">Cart <span class="fw-normal">Total</span></h1>
+                                            <div class="d-flex justify-content-between mb-4">
+                                                <h5 class="mb-0 me-4">Subtotal:</h5>
+                                                <p class="mb-0" data-cart-total-price="${totalPrice}">
+                                                    <fmt:formatNumber type="number" value="${totalPrice}" />
+                                                    đ
+                                                </p>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <h5 class="mb-0 me-4">Shipping</h5>
+                                                <div class="">
+                                                    <p class="mb-0">Flat rate: $3%</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
+                                            <h5 class="mb-0 ps-4 me-4">Total</h5>
+                                            <p class="mb-0 pe-4">
+                                                <fmt:formatNumber type="number"
+                                                    value="${totalPrice = totalPrice * (1 + 0.03)}" />
                                                 đ
                                             </p>
                                         </div>
-                                        <div class="d-flex justify-content-between">
-                                            <h5 class="mb-0 me-4">Shipping</h5>
-                                            <div class="">
-                                                <p class="mb-0">Flat rate: $3%</p>
-                                            </div>
-                                        </div>
-                                        <!-- <p class="mb-0 text-end">Shipping to Ukraine.</p> -->
+                                        <button
+                                            class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
+                                            type="button">Proceed Checkout</button>
                                     </div>
-                                    <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
-                                        <h5 class="mb-0 ps-4 me-4">Total</h5>
-                                        <p class="mb-0 pe-4">
-                                            <fmt:formatNumber type="number"
-                                                value="${totalPrice = totalPrice * (1 + 0.03)}" />
-                                            đ
-                                        </p>
-                                    </div>
-                                    <button
-                                        class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
-                                        type="button">Proceed Checkout</button>
                                 </div>
-                            </div>
+                            </c:if>
                         </div>
                     </div>
                 </div>

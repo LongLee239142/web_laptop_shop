@@ -70,7 +70,7 @@ public class ItemController {
 
         if (cartDetailsOptional.isPresent()) {
             List<CartDetail> cartDetails = cartDetailsOptional.get();
-            int productCount = cartDetails.size(); // Đếm số sản phẩm trong giỏ
+            int productCount = cartDetails.size();
             user.getCart().setSum(productCount);
             session.setAttribute("sum", productCount);
             if (productCount == 0) {

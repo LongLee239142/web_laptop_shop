@@ -112,4 +112,16 @@ public class ProductService {
         return listProductByCartId;
     }
 
+    public Optional<List<CartDetail>> getProductByICartDetail(long id) {
+        return Optional.ofNullable(this.cartDetailRepository.findByCartId(id));
+    }
+
+    public void deleteAProductToCart(long id, String email) {
+        this.cartDetailRepository.deleteById(id);
+    }
+
+    public void deleteCartId(long id) {
+        this.cartRepository.deleteById(id);
+    }
+
 }

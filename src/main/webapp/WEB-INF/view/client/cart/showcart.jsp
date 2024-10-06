@@ -159,7 +159,8 @@
                                         </div>
                                         <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
                                             <h5 class="mb-0 ps-4 me-4">Total</h5>
-                                            <p class="mb-0 pe-4">
+                                            <p class="mb-0 pe-4"
+                                                data-cart-total-price-fea="${totalPrice = totalPrice * (1 + 0.03)}">
                                                 <fmt:formatNumber type="number"
                                                     value="${totalPrice = totalPrice * (1 + 0.03)}" />
                                                 đ

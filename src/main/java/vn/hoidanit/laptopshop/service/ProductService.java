@@ -47,7 +47,6 @@ public class ProductService {
 
     public Product handleSaveProduct(Product product) {
         Product mrLeeProduct = this.productRepository.save(product);
-        System.out.println(mrLeeProduct);
         return mrLeeProduct;
     }
 

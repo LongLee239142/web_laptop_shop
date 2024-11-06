@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import vn.hoidanit.laptopshop.domain.Order;
+import vn.hoidanit.laptopshop.domain.User;
 import vn.hoidanit.laptopshop.repository.OrderRepository;
 
 @Service
@@ -32,4 +33,7 @@ public class OrderService {
         this.orderRepository.deleteById(id);
     }
 
+    public List<Order> fetchByUser(User user) {
+        return this.orderRepository.findByUser(user);
+    }
 }

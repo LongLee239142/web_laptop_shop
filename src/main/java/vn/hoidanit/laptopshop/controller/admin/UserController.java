@@ -57,9 +57,9 @@ public class UserController {
             @RequestParam("hoidanitFile") MultipartFile file) {
         // validate
         if (newUserBindingResult.hasErrors()) {
-            return "/admin/user/create";
+            return "admin/user/create";
         }
-        //
+
         String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
         String hashPassword = this.PasswordEncoder.encode(hoidanit.getPassword());
         hoidanit.setAvatar(avatar);

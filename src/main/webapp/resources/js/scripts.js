@@ -24,3 +24,16 @@ window.addEventListener('DOMContentLoaded', event => {
     }
 
 });
+setTimeout(function () {
+    const errorAlert = document.getElementById('errorAlert');
+    if (errorAlert) {
+        errorAlert.classList.remove('show'); // Ẩn thông báo lỗi
+        errorAlert.classList.add('fade');    // Hiệu ứng mờ dần
+    }
+
+    const successAlert = document.getElementById('successAlert');
+    if (successAlert) {
+        successAlert.classList.remove('show'); // Ẩn thông báo thành công
+        successAlert.classList.add('fade');    // Hiệu ứng mờ dần
+    }
+}, 3000);

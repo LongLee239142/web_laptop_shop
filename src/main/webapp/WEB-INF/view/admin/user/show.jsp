@@ -31,6 +31,24 @@
                                     <div class="col-12 mx-auto">
                                         <div class="d-flex justify-content-between">
                                             <h3>Table users</h3>
+                                            <c:if test="${not empty errorMessage}">
+                                                <h4 class="alert alert-danger alert-dismissible fade show"
+                                                    id="errorAlert" role="alert">
+                                                    ${errorMessage}
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                        aria-label="Close"></button>
+                                                </h4>
+                                            </c:if>
+
+                                            <c:if test="${not empty successMessage}">
+                                                <h4 class="alert alert-success alert-dismissible fade show"
+                                                    id="successAlert" role="alert">
+                                                    ${successMessage}
+                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                        aria-label="Close"></button>
+                                                </h4>
+                                            </c:if>
+
                                             <a href="/admin/user/create" class="btn btn-primary">Create a user</a>
                                         </div>
 

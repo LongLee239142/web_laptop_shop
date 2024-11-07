@@ -76,15 +76,20 @@
                                             </table>
                                             <nav aria-label="Page navigation example">
                                                 <ul class="pagination justify-content-center">
-                                                    <li class="page-item disabled">
-                                                        <a class="page-link" href="#" tabindex="-1"
+                                                    <li class="page-item ">
+                                                        <a class="${1 eq currentPage ? 'disabled page-link' : 'page-link'}"
+                                                            href="/admin/product?page=${currentPage - 1}" tabindex="-1"
                                                             aria-disabled="true">Previous</a>
                                                     </li>
-                                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                                    <li class="page-item">
-                                                        <a class="page-link" href="#">Next</a>
+                                                    <c:forEach begin="0" end="${totalPage-1}" varStatus="loop">
+                                                        <li class="page-item">
+                                                            <a class="${(loop.index + 1) eq currentPage ? 'active page-link' : 'page-link'}"
+                                                                href="/admin/product?page=${loop.index + 1}">${loop.index
+                                                                + 1}</a>
+                                                        </li>
+                                                    </c:forEach>
+                                                    <a class="${totalPage eq currentPage ? 'disabled page-link' : 'page-link'}"
+                                                        href="/admin/product?page=${currentPage + 1}">Next</a>
                                                     </li>
                                                 </ul>
                                             </nav>

@@ -88,8 +88,9 @@
                                                                 + 1}</a>
                                                         </li>
                                                     </c:forEach>
-                                                    <a class="${totalPage eq currentPage ? 'disabled page-link' : 'page-link'}"
-                                                        href="/admin/product?page=${currentPage + 1}">Next</a>
+                                                    <li>
+                                                        <a class="${totalPage eq currentPage ? 'disabled page-link' : 'page-link'}"
+                                                            href="/admin/product?page=${currentPage + 1}">Next</a>
                                                     </li>
                                                 </ul>
                                             </nav>

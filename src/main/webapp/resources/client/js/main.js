@@ -127,6 +127,20 @@
         $('#videoModal').on('hide.bs.modal', function (e) {
             $("#video").attr('src', $videoSrc);
         })
+
+        //add active class to header
+        const navElement = $("#navbarCollapse");
+        const currentUrl = window.location.pathname;
+        navElement.find('a.nav-link').each(function () {
+            const link = $(this); // Get the current link in the loop
+            const href = link.attr('href'); // Get the href attribute of the link
+
+            if (href === currentUrl) {
+                link.addClass('active'); // Add 'active' class if the href matches the current URL
+            } else {
+                link.removeClass('active'); // Remove 'active' class if the href does not match
+            }
+        });
     });
 
 
@@ -170,6 +184,8 @@
         const el = document.getElementById(`cartDetails${index}.quantity`);
         $(el).val(newVal);
 
+
+
         //get price
         const price = input.attr("data-cart-detail-price");
         const id = input.attr("data-cart-detail-id");
@@ -182,19 +198,14 @@
 
         //update total cart price
         const totalPriceElement = $(`p[data-cart-total-price]`);
-        const totalPriceElementFea = $(`p[data-cart-total-price-fea]`);
 
         if (totalPriceElement && totalPriceElement.length) {
             const currentTotal = totalPriceElement.first().attr("data-cart-total-price");
-            const currentTotalFea = totalPriceElementFea.first().attr("data-cart-total-price-fea");
             let newTotal = +currentTotal;
-            let newTotalFea = +currentTotalFea;
             if (change === 0) {
                 newTotal = +currentTotal;
-                newTotalFea = +currentTotalFea;
             } else {
                 newTotal = change * (+price) + (+currentTotal);
-                newTotalFea = change * (+price) * (1 + 0.03) + (+currentTotalFea);
             }
 
             //reset change
@@ -204,11 +215,9 @@
             totalPriceElement?.each(function (index, element) {
                 //update text
                 $(totalPriceElement[index]).text(formatCurrency(newTotal.toFixed(2)) + " đ");
-                $(totalPriceElementFea[index]).text(formatCurrency(newTotalFea.toFixed(2)) + " đ");
 
                 //update data-attribute
                 $(totalPriceElement[index]).attr("data-cart-total-price", newTotal);
-                $(totalPriceElementFea[index]).attr("data-cart-total-price-fea", newTotalFea);
             });
         }
     });

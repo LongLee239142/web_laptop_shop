@@ -33,7 +33,9 @@ public class ProductController {
     }
 
     @GetMapping("/admin/product")
-    public String getUserPage(Model model, @RequestParam("page") Optional<String> pageOptional) {
+    public String getUserPage(Model model,
+        @RequestParam("page") Optional<String> pageOptional,
+        @RequestParam("name") Optional<String> nameOptional) {
         int page = 1;
         try {
             if (pageOptional.isPresent()) {

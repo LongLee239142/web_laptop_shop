@@ -9,8 +9,7 @@
             }
         }, 1);
     };
-    spinner(0);
-
+    spinner();
 
     // Fixed Navbar
     $(window).scroll(function () {
@@ -29,7 +28,6 @@
         }
     });
 
-
     // Back to top button
     $(window).scroll(function () {
         if ($(this).scrollTop() > 300) {
@@ -42,7 +40,6 @@
         $('html, body').animate({ scrollTop: 0 }, 1500, 'easeInOutExpo');
         return false;
     });
-
 
     // Testimonial carousel
     $(".testimonial-carousel").owlCarousel({
@@ -59,26 +56,15 @@
         ],
         responsiveClass: true,
         responsive: {
-            0: {
-                items: 1
-            },
-            576: {
-                items: 1
-            },
-            768: {
-                items: 1
-            },
-            992: {
-                items: 2
-            },
-            1200: {
-                items: 2
-            }
+            0: { items: 1 },
+            576: { items: 1 },
+            768: { items: 1 },
+            992: { items: 2 },
+            1200: { items: 2 }
         }
     });
 
-
-    // vegetable carousel
+    // Vegetable carousel
     $(".vegetable-carousel").owlCarousel({
         autoplay: true,
         smartSpeed: 1500,
@@ -93,24 +79,13 @@
         ],
         responsiveClass: true,
         responsive: {
-            0: {
-                items: 1
-            },
-            576: {
-                items: 1
-            },
-            768: {
-                items: 2
-            },
-            992: {
-                items: 3
-            },
-            1200: {
-                items: 4
-            }
+            0: { items: 1 },
+            576: { items: 1 },
+            768: { items: 2 },
+            992: { items: 3 },
+            1200: { items: 4 }
         }
     });
-
 
     // Modal Video
     $(document).ready(function () {
@@ -118,123 +93,92 @@
         $('.btn-play').click(function () {
             $videoSrc = $(this).data("src");
         });
-        console.log($videoSrc);
 
-        $('#videoModal').on('shown.bs.modal', function (e) {
+        $('#videoModal').on('shown.bs.modal', function () {
             $("#video").attr('src', $videoSrc + "?autoplay=1&amp;modestbranding=1&amp;showinfo=0");
-        })
+        });
 
-        $('#videoModal').on('hide.bs.modal', function (e) {
+        $('#videoModal').on('hide.bs.modal', function () {
             $("#video").attr('src', $videoSrc);
-        })
+        });
 
-        //add active class to header
+        // Add active class to header links
         const navElement = $("#navbarCollapse");
         const currentUrl = window.location.pathname;
         navElement.find('a.nav-link').each(function () {
-            const link = $(this); // Get the current link in the loop
-            const href = link.attr('href'); // Get the href attribute of the link
-
+            const link = $(this);
+            const href = link.attr('href');
             if (href === currentUrl) {
-                link.addClass('active'); // Add 'active' class if the href matches the current URL
+                link.addClass('active');
             } else {
-                link.removeClass('active'); // Remove 'active' class if the href does not match
+                link.removeClass('active');
             }
         });
     });
 
-
-
     // Product Quantity
-    // $('.quantity button').on('click', function () {
-    //     var button = $(this);
-    //     var oldValue = button.parent().parent().find('input').val();
-    //     if (button.hasClass('btn-plus')) {
-    //         var newVal = parseFloat(oldValue) + 1;
-    //     } else {
-    //         if (oldValue > 0) {
-    //             var newVal = parseFloat(oldValue) - 1;
-    //         } else {
-    //             newVal = 0;
-    //         }
-    //     }
-    //     button.parent().parent().find('input').val(newVal);
-    // });
     $('.quantity button').on('click', function () {
         let change = 0;
-
         var button = $(this);
-        var oldValue = button.parent().parent().find('input').val();
+        var input = button.closest('.quantity').find('input');
+        var oldValue = parseInt(input.val()) || 1;
+
         if (button.hasClass('btn-plus')) {
-            var newVal = parseFloat(oldValue) + 1;
+            var newVal = oldValue + 1;
             change = 1;
         } else {
             if (oldValue > 1) {
-                var newVal = parseFloat(oldValue) - 1;
+                var newVal = oldValue - 1;
                 change = -1;
             } else {
                 newVal = 1;
             }
         }
-        const input = button.parent().parent().find('input');
+
         input.val(newVal);
 
-        //set form index
-        const index = input.attr("data-cart-detail-index")
-        const el = document.getElementById(`cartDetails${index}.quantity`);
-        $(el).val(newVal);
+        // Update hidden input
+        const index = input.attr("data-cart-detail-index");
+        const hiddenInput = document.getElementById(`cartDetails${index}.quantity`);
+        if (hiddenInput) {
+            hiddenInput.value = newVal;
+        }
 
-
-
-        //get price
-        const price = input.attr("data-cart-detail-price");
+        // Update price
+        const price = parseFloat(input.attr("data-cart-detail-price")) || 0;
         const id = input.attr("data-cart-detail-id");
-
         const priceElement = $(`p[data-cart-detail-id='${id}']`);
-        if (priceElement) {
-            const newPrice = +price * newVal;
+        if (priceElement.length) {
+            const newPrice = price * newVal;
             priceElement.text(formatCurrency(newPrice.toFixed(2)) + " đ");
         }
 
-        //update total cart price
-        const totalPriceElement = $(`p[data-cart-total-price]`);
-
-        if (totalPriceElement && totalPriceElement.length) {
-            const currentTotal = totalPriceElement.first().attr("data-cart-total-price");
-            let newTotal = +currentTotal;
-            if (change === 0) {
-                newTotal = +currentTotal;
-            } else {
-                newTotal = change * (+price) + (+currentTotal);
+        // Update total price
+        debounceUpdateTotal(() => {
+            const totalPriceElement = $(`p[data-cart-total-price]`);
+            if (totalPriceElement.length) {
+                let currentTotal = parseFloat(totalPriceElement.attr("data-cart-total-price")) || 0;
+                let newTotal = currentTotal + change * price;
+                totalPriceElement.text(formatCurrency(newTotal.toFixed(2)) + " đ");
+                totalPriceElement.attr("data-cart-total-price", newTotal);
             }
-
-            //reset change
-            change = 0;
-
-            //update
-            totalPriceElement?.each(function (index, element) {
-                //update text
-                $(totalPriceElement[index]).text(formatCurrency(newTotal.toFixed(2)) + " đ");
-
-                //update data-attribute
-                $(totalPriceElement[index]).attr("data-cart-total-price", newTotal);
-            });
-        }
+        }, 300);
     });
 
-    function formatCurrency(value) {
-        // Use the 'vi-VN' locale to format the number according to Vietnamese currency format
-        // and 'VND' as the currency type for Vietnamese đồng
-        const formatter = new Intl.NumberFormat('vi-VN', {
-            style: 'decimal',
-            minimumFractionDigits: 0, // No decimal part for whole numbers
-        });
-
-        let formatted = formatter.format(value);
-        // Replace dots with commas for thousands separator
-        formatted = formatted.replace(/\./g, ',');
-        return formatted;
+    // Debounce function for updating total
+    let updateTotalTimeout;
+    function debounceUpdateTotal(callback, delay) {
+        clearTimeout(updateTotalTimeout);
+        updateTotalTimeout = setTimeout(callback, delay);
     }
 
+    // Format currency
+    function formatCurrency(value) {
+        const formatter = new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+            minimumFractionDigits: 0
+        });
+        return formatter.format(value);
+    }
 })(jQuery);
-

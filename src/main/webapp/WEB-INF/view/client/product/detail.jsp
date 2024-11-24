@@ -111,8 +111,10 @@
                                                 <input class="form-control d-none" type="text" value="${product.id}"
                                                     name="id" />
 
-                                                <input class="form-control d-none" type="text" name="quantity"
-                                                    id="cartDetails0.quantity" />
+                                               <input class="form-control d-none" type="text" name="quantity"
+                                               id="cartDetails0.quantity" />
+
+
                                                 <button
                                                     class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i
                                                         class="fa fa-shopping-bag me-2 text-primary"></i>

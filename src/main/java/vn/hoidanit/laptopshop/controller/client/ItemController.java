@@ -175,7 +175,7 @@ public class ItemController {
         } catch (Exception e) {
             // TODO: handle exception
         }
-        Pageable pageable = PageRequest.of(page - 1, 6);
+        Pageable pageable = PageRequest.of(page - 1, 60);
         String name = nameOptional.isPresent()? nameOptional.get() : "";
         Page<Product> products = this.productService.getAllProducts(pageable,name);
         List<Product> listProducts = products.getContent();

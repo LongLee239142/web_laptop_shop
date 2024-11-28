@@ -65,7 +65,7 @@
                                 <div class="row g-4 fruite">
                                     <div class="col-12 col-md-4">
                                         <div class="row g-4">
-                                            <div class="col-12">
+                                            <div class="col-12" id="factoryFilter">
                                                 <div class="mb-2"><b>Hãng sản xuất</b></div>
                                                 <div class="form-check form-check-inline">
                                                     <input class="form-check-input" type="checkbox" id="factory-1"
@@ -101,7 +101,7 @@
                                                 </div>
 
                                             </div>
-                                            <div class="col-12">
+                                            <div class="col-12"  id="targetFilter">
                                                 <div class="mb-2"><b>Mục đích sử dụng</b></div>
                                                 <div class="form-check form-check-inline">
                                                     <input class="form-check-input" type="checkbox" id="target-1"
@@ -134,7 +134,7 @@
 
 
                                             </div>
-                                            <div class="col-12">
+                                            <div class="col-12"  id="priceFilter">
                                                 <div class="mb-2"><b>Mức giá</b></div>
 
                                                 <div class="form-check form-check-inline">
@@ -187,7 +187,7 @@
                                             </div>
                                             <div class="col-12">
                                                 <button
-                                                    class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4">
+                                                    class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4" id="btnFilter">
                                                     Lọc Sản Phẩm
                                                 </button>
                                             </div>
@@ -244,8 +244,7 @@
 
                                                 <li class="page-item ">
                                                     <a class="${1 eq currentPage ? 'disabled page-link' : 'page-link'}"
-                                                        href="/products?page=${currentPage - 1}" tabindex="-1"
-                                                        aria-disabled="true"> <span
+                                                        href="/products?page=${currentPage - 1}" aria-label="Previous"> <span
                                                             aria-hidden="true">&laquo;</span></a>
                                                 </li>
                                                 <c:forEach begin="0" end="${totalPage - 1}" varStatus="loop">

@@ -178,7 +178,7 @@ public class ItemController {
         } catch (Exception e) {
             // TODO: handle exception
         }
-        Pageable pageable = PageRequest.of(page - 1, 3);
+        Pageable pageable = PageRequest.of(page - 1, 6);
         if (productCriteriaDTO.getSort() != null && productCriteriaDTO.getSort().isPresent()) {
             String sort = productCriteriaDTO.getSort().get();
             if (sort.equals("gia-tang-dan")) {
@@ -194,7 +194,7 @@ public class ItemController {
                 : new ArrayList<Product>();
         String qs = request.getQueryString();
         if (qs != null && !qs.isBlank()) {
-            qs = qs.replace("page =" + page, "");
+            qs = qs.replace("page=" + page, "");
         }
         model.addAttribute("products", listProducts);
         model.addAttribute("currentPage", page);

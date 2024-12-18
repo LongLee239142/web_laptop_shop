@@ -34,8 +34,8 @@ public class ProductController {
 
     @GetMapping("/admin/product")
     public String getUserPage(Model model,
-        @RequestParam("page") Optional<String> pageOptional,
-        @RequestParam("name") Optional<String> nameOptional) {
+            @RequestParam("page") Optional<String> pageOptional,
+            @RequestParam("name") Optional<String> nameOptional) {
         int page = 1;
         try {
             if (pageOptional.isPresent()) {
@@ -47,7 +47,7 @@ public class ProductController {
         } catch (Exception e) {
             // TODO: handle exception
         }
-        Pageable pageable = PageRequest.of(page - 1, 3);
+        Pageable pageable = PageRequest.of(page - 1, 5);
         Page<Product> products = this.productService.getAllProducts(pageable);
         List<Product> listProducts = products.getContent();
         model.addAttribute("product_1", listProducts);

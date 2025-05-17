@@ -278,6 +278,7 @@
                         </div>
                     </div>
                     <!-- Single Product End -->
+                    <jsp:include page="/WEB-INF/view/chatbot.jsp" />
 
                     <jsp:include page="../layout/footer.jsp" />
 

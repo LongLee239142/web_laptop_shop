@@ -43,6 +43,13 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+                                                <c:if test="${ empty orders}">
+                                                    <tr>
+                                                        <td colspan="6">
+                                                            Không có đơn nào cả
+                                                        </td>
+                                                    </tr>
+                                                </c:if>
                                                     <c:forEach var="order" items="${orders}">
 
                                                         <tr>

@@ -11,14 +11,19 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import vn.hoidanit.laptopshop.entity.ChatHistory;
+import vn.hoidanit.laptopshop.repository.ChatHistoryRepository;
 import vn.hoidanit.laptopshop.service.ChatService;
-
 
 @Service
 public class ChatServiceImpl implements ChatService {
     private static final Logger logger = LoggerFactory.getLogger(ChatServiceImpl.class);
+
+    @Autowired
+    private ChatHistoryRepository chatHistoryRepository;
 
     private static final Map<Pattern, String> PATTERNS = new LinkedHashMap<>();
     private static final Map<String, List<String>> PRODUCT_INFO = new HashMap<>();
@@ -144,6 +149,11 @@ public class ChatServiceImpl implements ChatService {
         try {
             message = message.toLowerCase().trim();
             String response = processMessage(message);
+            
+            // Save chat history to database
+            ChatHistory chatHistory = new ChatHistory(message, response);
+            chatHistoryRepository.save(chatHistory);
+            
             return response;
         } catch (Exception e) {
             logger.error("Lỗi xử lý tin nhắn: {}", message, e);
@@ -210,5 +220,10 @@ public class ChatServiceImpl implements ChatService {
 
     public void addProductInfo(String brand, List<String> products) {
         PRODUCT_INFO.put(brand.toLowerCase(), products);
+    }
+
+    @Override
+    public List<ChatHistory> getChatHistory() {
+        return chatHistoryRepository.findAllOrderByTimestampDesc();
     }
 }

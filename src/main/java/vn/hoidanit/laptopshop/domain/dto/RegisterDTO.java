@@ -3,7 +3,6 @@ package vn.hoidanit.laptopshop.domain.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import vn.hoidanit.laptopshop.service.validator.RegisterChecked;
-import vn.hoidanit.laptopshop.service.validator.StrongPassword;
 
 @RegisterChecked
 public class RegisterDTO {

@@ -121,7 +121,7 @@
                                 </table>
                             </div>
                             <c:if test="${not empty cartDetails}">
-                                <form:form action="/place-order" method="post" modelAttribute="cart">
+                                <form:form action="/place-order" method="post" modelAttribute="cart" id="checkoutForm">
                                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                                     <div class="mt-5 row g-4 justify-content-start">
                                         <div class="col-12 col-md-6">
@@ -162,9 +162,42 @@
                                                         </div>
                                                     </div>
                                                     <div class="mt-3 d-flex justify-content-between">
-                                                        <h5 class="mb-0 me-4">Hình thức</h5>
-                                                        <div class="">
-                                                            <p class="mb-0">Thanh toán khi nhận hàng (COD)</p>
+                                                        <h5 class="mb-0 me-4">Hình thức thanh toán</h5>
+                                                        <div class="payment-methods">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="COD" checked>
+                                                                <label class="form-check-label" for="cod">
+                                                                    Thanh toán khi nhận hàng (COD)
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio" name="paymentMethod" id="vnpay" value="VNPAY">
+                                                                <label class="form-check-label" for="vnpay">
+                                                                    <img src="/images/vnpay.png" alt="VNPay" style="height: 20px; margin-right: 5px;">
+                                                                    Thanh toán qua VNPay
+                                                                </label>
+                                                                <div class="vnpay-options ms-4 mt-2" style="display: none;">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio" name="vnpayType" id="vnpayCard" value="card" checked>
+                                                                        <label class="form-check-label" for="vnpayCard">
+                                                                            <i class="fas fa-credit-card"></i> Thanh toán bằng thẻ
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio" name="vnpayType" id="vnpayQR" value="qr">
+                                                                        <label class="form-check-label" for="vnpayQR">
+                                                                            <i class="fas fa-qrcode"></i> Thanh toán bằng mã QR
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio" name="paymentMethod" id="momo" value="MOMO">
+                                                                <label class="form-check-label" for="momo">
+                                                                    <img src="/images/momo.png" alt="MoMo" style="height: 20px; margin-right: 5px;">
+                                                                    Thanh toán qua MoMo
+                                                                </label>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -177,7 +210,8 @@
                                                 </div>
 
                                                 <button
-                                                    class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4">
+                                                    class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
+                                                    type="submit">
                                                     Xác nhận thanh toán
                                                 </button>
 
@@ -210,6 +244,85 @@
 
                     <!-- Template Javascript -->
                     <script src="/client/js/main.js"></script>
+                    <script>
+                        // Show/hide VNPay options when VNPay is selected
+                        document.getElementById('vnpay').addEventListener('change', function() {
+                            const vnpayOptions = document.querySelector('.vnpay-options');
+                            vnpayOptions.style.display = this.checked ? 'block' : 'none';
+                        });
+
+                        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+                            
+                            // Get CSRF token
+                            const csrfInput = document.querySelector('input[name="${_csrf.parameterName}"]');
+                            const csrfToken = csrfInput ? csrfInput.value : '';
+                            
+                            // Get total price from the data attribute
+                            const totalPrice = document.querySelector('[data-cart-total-price]').getAttribute('data-cart-total-price');
+                            const orderInfo = "Thanh toan don hang " + new Date().getTime();
+                            
+                            // Create form data
+                            const formData = new FormData();
+                            formData.append('amount', totalPrice);
+                            formData.append('orderInfo', orderInfo);
+                            formData.append('receiverName', document.querySelector('input[name="receiverName"]').value);
+                            formData.append('receiverAddress', document.querySelector('input[name="receiverAddress"]').value);
+                            formData.append('receiverPhone', document.querySelector('input[name="receiverPhone"]').value);
+                            if (csrfToken) {
+                                formData.append('${_csrf.parameterName}', csrfToken);
+                            }
+                            
+                            if (paymentMethod === 'VNPAY') {
+                                // Add payment type for VNPay
+                                const vnpayType = document.querySelector('input[name="vnpayType"]:checked').value;
+                                formData.append('paymentType', vnpayType);
+                                
+                                // Submit to VNPay endpoint
+                                fetch('/api/payment/vnpay/create', {
+                                    method: 'POST',
+                                    body: formData,
+                                    headers: {
+                                        'X-CSRF-TOKEN': csrfToken
+                                    }
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.paymentUrl) {
+                                        window.location.href = data.paymentUrl;
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    alert('Có lỗi xảy ra khi xử lý thanh toán VNPay. Vui lòng thử lại sau.');
+                                });
+                            } else if (paymentMethod === 'MOMO') {
+                                // Submit to MoMo endpoint
+                                fetch('/api/payment/momo/create', {
+                                    method: 'POST',
+                                    body: formData,
+                                    headers: {
+                                        'X-CSRF-TOKEN': csrfToken
+                                    }
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.paymentUrl) {
+                                        window.location.href = data.paymentUrl;
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    alert('Có lỗi xảy ra khi xử lý thanh toán MoMo. Vui lòng thử lại sau.');
+                                });
+                            } else {
+                                // Submit to regular order endpoint
+                                this.action = '/place-order';
+                                this.submit();
+                            }
+                        });
+                    </script>
                 </body>
 
                 </html>

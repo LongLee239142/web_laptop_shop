@@ -1,11 +1,14 @@
 package vn.hoidanit.laptopshop.controller.client;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Optional;
 import org.springframework.data.domain.Sort;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,16 +29,21 @@ import vn.hoidanit.laptopshop.domain.User;
 import vn.hoidanit.laptopshop.domain.dto.ProductCriteriaDTO;
 import vn.hoidanit.laptopshop.service.ProductService;
 import vn.hoidanit.laptopshop.service.UserService;
+import vn.hoidanit.laptopshop.service.VNPayService;
+import vn.hoidanit.laptopshop.service.MoMoService;
 
 @Controller
 public class ItemController {
     private final ProductService productService;
     private final UserService userService;
+    private final VNPayService vnPayService;
+    private final MoMoService moMoService;
 
-    public ItemController(ProductService productService, UserService userService) {
+    public ItemController(ProductService productService, UserService userService, VNPayService vnPayService, MoMoService moMoService) {
         this.productService = productService;
         this.userService = userService;
-
+        this.vnPayService = vnPayService;
+        this.moMoService = moMoService;
     }
 
     @GetMapping("/product/{id}")
@@ -201,6 +210,170 @@ public class ItemController {
         model.addAttribute("totalPage", prs.getTotalPages());
         model.addAttribute("queryString", qs);
         return "client/product/show";
+    }
+
+    @PostMapping("/payment/vnpay")
+    public String processVNPayPayment(
+            HttpServletRequest request,
+            @RequestParam("receiverName") String receiverName,
+            @RequestParam("receiverAddress") String receiverAddress,
+            @RequestParam("receiverPhone") String receiverPhone,
+            @RequestParam(value = "paymentType", defaultValue = "card") String paymentType) {
+        
+        User currentUser = new User();
+        HttpSession session = request.getSession(false);
+        long id = (long) session.getAttribute("id");
+        currentUser.setId(id);
+        
+        Cart cart = this.productService.fetchByUser(currentUser);
+        List<CartDetail> cartDetails = cart == null ? new ArrayList<CartDetail>() : cart.getCartDetails();
+        
+        double totalPrice = 0;
+        for (CartDetail cd : cartDetails) {
+            totalPrice += cd.getPrice() * cd.getQuantity();
+        }
+
+        String orderInfo = "Thanh toan don hang " + System.currentTimeMillis();
+        String paymentUrl;
+        
+        if ("qr".equals(paymentType)) {
+            paymentUrl = vnPayService.createQRPaymentUrl(totalPrice, orderInfo, request);
+        } else {
+            paymentUrl = vnPayService.createPaymentUrl(totalPrice, orderInfo, request);
+        }
+        
+        // Lưu thông tin đơn hàng vào session để xử lý sau khi thanh toán
+        session.setAttribute("orderInfo", orderInfo);
+        session.setAttribute("receiverName", receiverName);
+        session.setAttribute("receiverAddress", receiverAddress);
+        session.setAttribute("receiverPhone", receiverPhone);
+        
+        return "redirect:" + paymentUrl;
+    }
+
+    @GetMapping("/payment/vnpay/return")
+    public String vnpayReturn(
+            HttpServletRequest request,
+            @RequestParam("vnp_ResponseCode") String vnp_ResponseCode,
+            @RequestParam("vnp_TxnRef") String vnp_TxnRef,
+            @RequestParam("vnp_TransactionNo") String vnp_TransactionNo,
+            @RequestParam("vnp_SecureHash") String vnp_SecureHash) {
+        
+        boolean paymentSuccess = vnPayService.verifyPayment(vnp_TxnRef, vnp_ResponseCode, vnp_TransactionNo, vnp_SecureHash);
+        
+        if (paymentSuccess) {
+            HttpSession session = request.getSession(false);
+            String receiverName = (String) session.getAttribute("receiverName");
+            String receiverAddress = (String) session.getAttribute("receiverAddress");
+            String receiverPhone = (String) session.getAttribute("receiverPhone");
+            
+            User currentUser = new User();
+            long id = (long) session.getAttribute("id");
+            currentUser.setId(id);
+            
+            this.productService.handlePlaceOrder(currentUser, session, receiverName, receiverAddress, receiverPhone);
+            return "redirect:/thanks";
+        }
+        
+        return "redirect:/checkout?error=payment_failed";
+    }
+
+    @PostMapping("/api/payment/vnpay/create")
+    @ResponseBody
+    public ResponseEntity<?> createVNPayPaymentUrl(
+            HttpServletRequest request,
+            @RequestParam("amount") double amount,
+            @RequestParam("orderInfo") String orderInfo,
+            @RequestParam(value = "paymentType", defaultValue = "card") String paymentType) {
+        
+        try {
+            String paymentUrl;
+            if ("qr".equals(paymentType)) {
+                paymentUrl = vnPayService.createQRPaymentUrl(amount, orderInfo, request);
+            } else {
+                paymentUrl = vnPayService.createPaymentUrl(amount, orderInfo, request);
+            }
+            
+            Map<String, String> response = new HashMap<>();
+            response.put("paymentUrl", paymentUrl);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Failed to create payment URL");
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    @GetMapping("/api/payment/vnpay/verify")
+    @ResponseBody
+    public ResponseEntity<?> verifyVNPayPayment(
+            @RequestParam("vnp_ResponseCode") String vnp_ResponseCode,
+            @RequestParam("vnp_TxnRef") String vnp_TxnRef,
+            @RequestParam("vnp_TransactionNo") String vnp_TransactionNo,
+            @RequestParam("vnp_SecureHash") String vnp_SecureHash) {
+        
+        boolean paymentSuccess = vnPayService.verifyPayment(vnp_TxnRef, vnp_ResponseCode, vnp_TransactionNo, vnp_SecureHash);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", paymentSuccess);
+        response.put("transactionNo", vnp_TransactionNo);
+        
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/api/payment/momo/create")
+    @ResponseBody
+    public ResponseEntity<?> createMoMoPaymentUrl(
+            HttpServletRequest request,
+            @RequestParam("amount") double amount,
+            @RequestParam("orderInfo") String orderInfo) {
+        try {
+            String paymentUrl = moMoService.createPaymentUrl(amount, orderInfo, request);
+            return ResponseEntity.ok(Map.of("paymentUrl", paymentUrl));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/api/payment/momo/return")
+    public String momoReturn(
+            HttpServletRequest request,
+            @RequestParam("partnerCode") String partnerCode,
+            @RequestParam("orderId") String orderId,
+            @RequestParam("requestId") String requestId,
+            @RequestParam("amount") String amount,
+            @RequestParam("orderInfo") String orderInfo,
+            @RequestParam("orderType") String orderType,
+            @RequestParam("transId") String transId,
+            @RequestParam("resultCode") String resultCode,
+            @RequestParam("message") String message,
+            @RequestParam("payType") String payType,
+            @RequestParam("signature") String signature) {
+        
+        boolean isValid = moMoService.verifyPayment(
+            partnerCode, orderId, requestId, amount, orderInfo,
+            orderType, transId, resultCode, message, payType, signature
+        );
+
+        if (isValid && "0".equals(resultCode)) {
+            // Payment successful
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                String receiverName = (String) session.getAttribute("receiverName");
+                String receiverAddress = (String) session.getAttribute("receiverAddress");
+                String receiverPhone = (String) session.getAttribute("receiverPhone");
+                
+                User currentUser = new User();
+                currentUser.setId((long) session.getAttribute("id"));
+                
+                this.productService.handlePlaceOrder(currentUser, session,
+                    receiverName, receiverAddress, receiverPhone);
+            }
+            return "redirect:/thanks";
+        } else {
+            // Payment failed
+            return "redirect:/checkout?error=payment_failed";
+        }
     }
 
 }

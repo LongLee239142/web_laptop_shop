@@ -306,15 +306,26 @@
                                         'X-CSRF-TOKEN': csrfToken
                                     }
                                 })
-                                .then(response => response.json())
+                                .then(response => {
+                                    console.log('Response status:', response.status);
+                                    return response.json().then(data => {
+                                        if (!response.ok) {
+                                            throw new Error(data.error || 'Unknown error occurred');
+                                        }
+                                        return data;
+                                    });
+                                })
                                 .then(data => {
+                                    console.log('MoMo Response:', data);
                                     if (data.paymentUrl) {
                                         window.location.href = data.paymentUrl;
+                                    } else {
+                                        alert('Có lỗi xảy ra khi tạo URL thanh toán MoMo: ' + (data.error || 'Unknown error'));
                                     }
                                 })
                                 .catch(error => {
-                                    console.error('Error:', error);
-                                    alert('Có lỗi xảy ra khi xử lý thanh toán MoMo. Vui lòng thử lại sau.');
+                                    console.error('Error details:', error);
+                                    alert('Có lỗi xảy ra khi xử lý thanh toán MoMo: ' + error.message);
                                 });
                             } else {
                                 // Submit to regular order endpoint

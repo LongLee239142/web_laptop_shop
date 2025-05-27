@@ -1,14 +1,12 @@
 package vn.hoidanit.laptopshop.service.impl;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +14,12 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletRequest;
 import vn.hoidanit.laptopshop.config.MoMoConfig;
@@ -35,37 +38,83 @@ public class MoMoServiceImpl implements MoMoService {
             String requestId = String.valueOf(System.currentTimeMillis());
             String extraData = "";
 
-            Map<String, String> rawHash = new HashMap<>();
-            rawHash.put("partnerCode", moMoConfig.getPartnerCode());
-            rawHash.put("orderId", orderId);
-            rawHash.put("requestId", requestId);
-            rawHash.put("amount", String.valueOf((long) amount));
-            rawHash.put("orderInfo", orderInfo);
-            rawHash.put("orderType", "momo_wallet");
-            rawHash.put("transId", String.valueOf(System.currentTimeMillis()));
-            rawHash.put("resultCode", "0");
-            rawHash.put("message", "success");
-            rawHash.put("payType", "qr");
-            rawHash.put("signature", "");
+            // Convert amount to long (remove decimal points)
+            long amountLong = (long) amount;
 
-            String signature = generateSignature(rawHash);
-            rawHash.put("signature", signature);
+            // Tạo raw data theo thứ tự cụ thể
+            StringBuilder rawData = new StringBuilder();
+            rawData.append("accessKey=").append(moMoConfig.getAccessKey())
+                  .append("&amount=").append(amountLong)
+                  .append("&extraData=").append(extraData)
+                  .append("&ipnUrl=").append(moMoConfig.getNotifyUrl())
+                  .append("&orderId=").append(orderId)
+                  .append("&orderInfo=").append(orderInfo)
+                  .append("&partnerCode=").append(moMoConfig.getPartnerCode())
+                  .append("&redirectUrl=").append(moMoConfig.getReturnUrl())
+                  .append("&requestId=").append(requestId)
+                  .append("&requestType=captureWallet");
 
-            StringBuilder query = new StringBuilder();
-            Iterator<Map.Entry<String, String>> itr = rawHash.entrySet().iterator();
-            while (itr.hasNext()) {
-                Map.Entry<String, String> entry = itr.next();
-                query.append(URLEncoder.encode(entry.getKey(), StandardCharsets.US_ASCII.toString()));
-                query.append('=');
-                query.append(URLEncoder.encode(entry.getValue(), StandardCharsets.US_ASCII.toString()));
-                if (itr.hasNext()) {
-                    query.append('&');
+            // Debug logs
+            System.out.println("MoMo Config:");
+            System.out.println("Partner Code: " + moMoConfig.getPartnerCode());
+            System.out.println("Access Key: " + moMoConfig.getAccessKey());
+            System.out.println("Secret Key: " + moMoConfig.getSecretKey());
+            System.out.println("Return URL: " + moMoConfig.getReturnUrl());
+            System.out.println("Notify URL: " + moMoConfig.getNotifyUrl());
+            System.out.println("Payment URL: " + moMoConfig.getPaymentUrl());
+            
+            System.out.println("Raw Data for Signature: " + rawData.toString());
+            
+            String signature = generateSignature(rawData.toString());
+            System.out.println("Generated Signature: " + signature);
+
+            // Tạo request body
+            Map<String, String> body = new HashMap<>();
+            body.put("partnerCode", moMoConfig.getPartnerCode());
+            body.put("orderId", orderId);
+            body.put("requestId", requestId);
+            body.put("amount", String.valueOf(amountLong));
+            body.put("orderInfo", orderInfo);
+            body.put("orderType", "momo_wallet");
+            body.put("redirectUrl", moMoConfig.getReturnUrl());
+            body.put("ipnUrl", moMoConfig.getNotifyUrl());
+            body.put("lang", "vi");
+            body.put("extraData", extraData);
+            body.put("requestType", "captureWallet");
+            body.put("signature", signature);
+
+            System.out.println("MoMo Request Body: " + body);
+
+            // Gửi POST JSON
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<Map<String, String>> httpEntity = new HttpEntity<>(body, headers);
+            
+            try {
+                ResponseEntity<Map> response = restTemplate.postForEntity(
+                    moMoConfig.getPaymentUrl(), httpEntity, Map.class);
+                
+                System.out.println("MoMo Response Status: " + response.getStatusCode());
+                System.out.println("MoMo Response Body: " + response.getBody());
+                
+                Map<String, Object> responseBody = response.getBody();
+                if (responseBody != null && responseBody.containsKey("payUrl")) {
+                    return responseBody.get("payUrl").toString();
+                } else {
+                    String errorMessage = "MoMo response does not contain payUrl: " + responseBody;
+                    System.out.println(errorMessage);
+                    throw new RuntimeException(errorMessage);
                 }
+            } catch (Exception e) {
+                System.out.println("Error calling MoMo API: " + e.getMessage());
+                e.printStackTrace();
+                throw new RuntimeException("Error calling MoMo API: " + e.getMessage(), e);
             }
-
-            return moMoConfig.getPaymentUrl() + "?" + query.toString();
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Error creating MoMo payment URL", e);
+        } catch (Exception e) {
+            System.out.println("Error in createPaymentUrl: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error creating MoMo payment URL: " + e.getMessage(), e);
         }
     }
 
@@ -86,42 +135,48 @@ public class MoMoServiceImpl implements MoMoService {
             rawHash.put("message", message);
             rawHash.put("payType", payType);
 
-            String expectedSignature = generateSignature(rawHash);
+            List<String> fieldNames = new ArrayList<>(rawHash.keySet());
+            Collections.sort(fieldNames);
+
+            StringBuilder hashData = new StringBuilder();
+            for (String fieldName : fieldNames) {
+                String fieldValue = rawHash.get(fieldName);
+                if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                    hashData.append(fieldName);
+                    hashData.append('=');
+                    hashData.append(fieldValue);
+                    hashData.append('&');
+                }
+            }
+
+            String dataToSign = hashData.toString() + "accessKey=" + moMoConfig.getAccessKey();
+            String expectedSignature = generateSignature(dataToSign);
             return expectedSignature.equals(signature);
         } catch (Exception e) {
             return false;
         }
     }
 
-    private String generateSignature(Map<String, String> rawHash) throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException {
-        List<String> fieldNames = new ArrayList<>(rawHash.keySet());
-        Collections.sort(fieldNames);
+    private String generateSignature(String data) throws NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException {
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+            SecretKeySpec secretKeySpec = new SecretKeySpec(moMoConfig.getSecretKey().getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+            mac.init(secretKeySpec);
+            byte[] hash = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
 
-        StringBuilder hashData = new StringBuilder();
-        for (String fieldName : fieldNames) {
-            String fieldValue = rawHash.get(fieldName);
-            if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                hashData.append(fieldName);
-                hashData.append('=');
-                hashData.append(fieldValue);
-                hashData.append('&');
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
             }
+            return hexString.toString();
+        } catch (Exception e) {
+            System.out.println("Error generating signature: " + e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
-        hashData.append("accessKey=").append(moMoConfig.getAccessKey());
-
-        Mac mac = Mac.getInstance("HmacSHA256");
-        SecretKeySpec secretKeySpec = new SecretKeySpec(moMoConfig.getSecretKey().getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-        mac.init(secretKeySpec);
-        byte[] hash = mac.doFinal(hashData.toString().getBytes(StandardCharsets.UTF_8));
-
-        StringBuilder hexString = new StringBuilder();
-        for (byte b : hash) {
-            String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) {
-                hexString.append('0');
-            }
-            hexString.append(hex);
-        }
-        return hexString.toString();
     }
 } 

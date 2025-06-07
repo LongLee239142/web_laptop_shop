@@ -5,22 +5,22 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class MoMoConfig {
-    @Value("${momo.partnerCode}")
+    @Value("${momo.partnerCode}")    // Mã đối tác
     private String partnerCode;
-
-    @Value("${momo.accessKey}")
+    
+    @Value("${momo.accessKey}")      // Khóa truy cập
     private String accessKey;
-
-    @Value("${momo.secretKey}")
+    
+    @Value("${momo.secretKey}")      // Khóa bí mật
     private String secretKey;
-
-    @Value("${momo.returnUrl}")
+    
+    @Value("${momo.returnUrl}")      // URL callback
     private String returnUrl;
-
-    @Value("${momo.notifyUrl}")
+    
+    @Value("${momo.notifyUrl}")      // URL thông báo
     private String notifyUrl;
-
-    @Value("${momo.paymentUrl}")
+    
+    @Value("${momo.paymentUrl}")     // URL thanh toán
     private String paymentUrl;
 
     public String getPartnerCode() {

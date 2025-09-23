@@ -18,8 +18,6 @@ public interface ProductRepository extends JpaRepository<Product, Long>,
 
   void deleteById(long id);
 
-  List<Product> findAll();
-
   Product findById(long id); // null
 
   Page<Product> findAll(Pageable page);

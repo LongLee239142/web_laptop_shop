@@ -3,6 +3,7 @@ package vn.longlee.laptopshop.controller.admin;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
 import vn.longlee.laptopshop.domain.Order;
@@ -41,15 +43,16 @@ public class OrderController {
                 page = 1;
             }
 
-        } catch (Exception e) {
-            // TODO: handle exception
+        } catch (NumberFormatException | NullPointerException e) {
+            page = 1; // Mặc định về trang 1 nếu có lỗi
         }
         Pageable pageable = PageRequest.of(page - 1, 5);
         Page<Order> orders = this.orderService.getAllOrders(pageable);
         List<Order> listOrders = orders.getContent();
+        int totalPages = Math.max(1, orders.getTotalPages()); // Đảm bảo totalPages >= 1
         model.addAttribute("orders", listOrders);
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPage", orders.getTotalPages());
+        model.addAttribute("totalPage", totalPages);
         return "admin/order/show";
     }
 
@@ -91,12 +94,21 @@ public class OrderController {
     }
 
     @PostMapping("/admin/order/delete")
-    public String postDeleteUser(Model model, @ModelAttribute("newOrder") Order order) {
-        Order curOrder = this.orderService.getOrderById(order.getId());
-        for (OrderDetail orderDetail : curOrder.getOrderDetails()) {
-            this.orderDetailService.deleteOrderDetailById(orderDetail.getId());
+    public String postDeleteUser(Model model, @ModelAttribute("newOrder") Order order, RedirectAttributes redirectAttributes) {
+        try {
+            Order curOrder = this.orderService.getOrderById(order.getId());
+            for (OrderDetail orderDetail : curOrder.getOrderDetails()) {
+                this.orderDetailService.deleteOrderDetailById(orderDetail.getId());
+            }
+            this.orderService.deleteOrderById(order.getId());
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa đơn hàng thành công!");
+            return "redirect:/admin/order";
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa đơn hàng này!");
+            return "redirect:/admin/order";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra khi xóa đơn hàng: " + e.getMessage());
+            return "redirect:/admin/order";
         }
-        this.orderService.deleteOrderById(order.getId());
-        return "redirect:/admin/order";
     }
 }

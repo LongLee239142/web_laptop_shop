@@ -253,14 +253,16 @@
                                                             aria-label="Previous"> <span
                                                                 aria-hidden="true">&laquo;</span></a>
                                                     </li>
-                                                    <c:forEach begin="0" end="${totalPage - 1}" varStatus="loop">
-                                                        <li class="page-item">
-                                                            <a class="${(loop.index + 1) eq currentPage ? 'active page-link' : 'page-link'}"
-                                                                href="/products?page=${loop.index + 1}${queryString}">
-                                                                ${loop.index + 1}
-                                                            </a>
-                                                        </li>
-                                                    </c:forEach>
+                                                    <c:if test="${totalPage > 0}">
+                                                        <c:forEach begin="0" end="${totalPage - 1}" varStatus="loop">
+                                                            <li class="page-item">
+                                                                <a class="${(loop.index + 1) eq currentPage ? 'active page-link' : 'page-link'}"
+                                                                    href="/products?page=${loop.index + 1}${queryString}">
+                                                                    ${loop.index + 1}
+                                                                </a>
+                                                            </li>
+                                                        </c:forEach>
+                                                    </c:if>
                                                     <li class="page-item">
                                                         <a class="${totalPages eq currentPage ? 'disabled page-link' : 'page-link'}"
                                                             href="/products?page=${currentPage + 1}${queryString}"

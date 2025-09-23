@@ -6,11 +6,17 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -38,24 +44,36 @@ public class UserController {
         this.imageService = imageService;
     }
 
+    // Helper method to get current logged-in user
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            return this.userService.getUserByEmail(email);
+        }
+        return null;
+    }
+
     @GetMapping("/admin/user")
     public String getUserPage(Model model, @RequestParam("page") Optional<String> pageOptional) {
         int page = 1;
         try {
             if (pageOptional.isPresent()) {
-                page = Integer.valueOf(pageOptional.get());
+                page = Integer.parseInt(pageOptional.get());
             } else {
                 page = 1;
             }
 
-        } catch (Exception e) {
+        } catch (NumberFormatException | NullPointerException e) {
+            page = 1; // Mặc định về trang 1 nếu có lỗi
         }
         Pageable pageable = PageRequest.of(page - 1, 5);
         Page<User> users = this.userService.getAllUsers(pageable);
         List<User> listUsers = users.getContent();
+        int totalPages = Math.max(1, users.getTotalPages()); // Đảm bảo totalPages >= 1
         model.addAttribute("users1", listUsers);
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPage", users.getTotalPages());
+        model.addAttribute("totalPage", totalPages);
         return "admin/user/show";
     }
 
@@ -103,13 +121,25 @@ public class UserController {
     @PostMapping("/admin/user/update")
     public String postUpdateUser(Model model, @ModelAttribute("newUser") @Valid User hoidanit,
             BindingResult newUserBindingResult,
-            @RequestParam("hoidanitFile") MultipartFile file) {
+            @RequestParam("hoidanitFile") MultipartFile file,
+            RedirectAttributes redirectAttributes) {
         // validate
         if (newUserBindingResult.hasErrors()) {
-            return "/admin/user/update";
+            return "admin/user/update";
         }
+        
+        User currentLoggedInUser = getCurrentUser();
         User currentUser = this.userService.getUserById(hoidanit.getId());
+        
         if (currentUser != null) {
+            // Kiểm tra nếu admin đang cố gắng đổi role của chính mình
+            if (currentLoggedInUser != null && currentLoggedInUser.getId() == currentUser.getId()) {
+                if (!currentUser.getRole().getName().equals(hoidanit.getRole().getName())) {
+                    redirectAttributes.addFlashAttribute("errorMessage", "Bạn không thể thay đổi role của chính mình!");
+                    return "redirect:/admin/user";
+                }
+            }
+            
             if (!file.isEmpty()) {
                 String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
                 currentUser.setAvatar(avatar);
@@ -119,8 +149,8 @@ public class UserController {
             currentUser.setPhone(hoidanit.getPhone());
             currentUser.setRole(this.userService.getRoleByName(hoidanit.getRole().getName()));
 
-            // bug here
             this.userService.handleSaveUser(currentUser);
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật người dùng thành công!");
         }
         return "redirect:/admin/user";
     }
@@ -136,12 +166,20 @@ public class UserController {
     public String postDeleteUser(Model model, @ModelAttribute("newUser") User mrLee,
             RedirectAttributes redirectAttributes) {
         try {
-            User currentUser = this.userService.getUserById(mrLee.getId());
-            this.userService.deleteAUser(currentUser.getId());
-            this.imageService.deleteImage(currentUser.getAvatar(), "avatar");
-            redirectAttributes.addFlashAttribute("successMessage", "User deleted successfully.");
+            User currentLoggedInUser = getCurrentUser();
+            User userToDelete = this.userService.getUserById(mrLee.getId());
+            
+            // Kiểm tra nếu admin đang cố gắng xóa chính mình
+            if (currentLoggedInUser != null && currentLoggedInUser.getId() == userToDelete.getId()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Bạn không thể xóa tài khoản của chính mình!");
+                return "redirect:/admin/user";
+            }
+            
+            this.userService.deleteAUser(userToDelete.getId());
+            this.imageService.deleteImage(userToDelete.getAvatar(), "avatar");
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa người dùng thành công!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete user. Please try again.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa người dùng: ");
         }
         return "redirect:/admin/user";
     }

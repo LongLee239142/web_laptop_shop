@@ -177,25 +177,28 @@ public class ItemController {
             ProductCriteriaDTO productCriteriaDTO,
             HttpServletRequest request) {
         int page = 1;
+        int pageSize = 6;
         try {
-            if (productCriteriaDTO.getPage().isPresent()) {
+            if (productCriteriaDTO != null && productCriteriaDTO.getPage() != null && productCriteriaDTO.getPage().isPresent()) {
                 page = Integer.valueOf(productCriteriaDTO.getPage().get());
-            } else {
+            
+             if (page < 1) {
                 page = 1;
+             }
             }
 
         } catch (Exception e) {
-            // TODO: handle exception
+            page = 1;
         }
-        Pageable pageable = PageRequest.of(page - 1, 6);
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
         if (productCriteriaDTO.getSort() != null && productCriteriaDTO.getSort().isPresent()) {
             String sort = productCriteriaDTO.getSort().get();
             if (sort.equals("gia-tang-dan")) {
-                pageable = PageRequest.of(page - 1, 3, Sort.by(Product_.PRICE).ascending());
+                pageable = PageRequest.of(page - 1, pageSize, Sort.by(Product_.PRICE).ascending());
             } else if (sort.equals("gia-giam-dan")) {
-                pageable = PageRequest.of(page - 1, 3, Sort.by(Product_.PRICE).descending());
+                pageable = PageRequest.of(page - 1, pageSize, Sort.by(Product_.PRICE).descending());
             } else {
-                pageable = PageRequest.of(page - 1, 3);
+                pageable = PageRequest.of(page - 1, pageSize);
             }
         }
         Page<Product> prs = this.productService.getAllProducts(pageable, productCriteriaDTO);
@@ -207,7 +210,7 @@ public class ItemController {
         }
         model.addAttribute("products", listProducts);
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPage", prs.getTotalPages());
+        model.addAttribute("totalPage", Math.max(1, prs.getTotalPages())); // Đảm bảo totalPages >= 1
         model.addAttribute("queryString", qs);
         return "client/product/show";
     }

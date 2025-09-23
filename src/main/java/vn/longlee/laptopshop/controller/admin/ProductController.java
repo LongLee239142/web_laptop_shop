@@ -3,6 +3,7 @@ package vn.longlee.laptopshop.controller.admin;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
 import vn.longlee.laptopshop.domain.Product;
@@ -44,15 +46,16 @@ public class ProductController {
                 page = 1;
             }
 
-        } catch (Exception e) {
-            // TODO: handle exception
+        } catch (NumberFormatException | NullPointerException e) {
+            page = 1; // Mặc định về trang 1 nếu có lỗi
         }
         Pageable pageable = PageRequest.of(page - 1, 5);
         Page<Product> products = this.productService.getAllProducts(pageable);
         List<Product> listProducts = products.getContent();
+        int totalPages = Math.max(1, products.getTotalPages()); // Đảm bảo totalPages >= 1
         model.addAttribute("product_1", listProducts);
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPage", products.getTotalPages());
+        model.addAttribute("totalPage", totalPages);
         return "admin/product/show";
     }
 
@@ -90,9 +93,18 @@ public class ProductController {
     }
 
     @PostMapping("/admin/product/delete")
-    public String postDeleteUser(Model model, @ModelAttribute("newProduct") Product mrLee) {
-        this.productService.deleteAProduct(mrLee.getId());
-        return "redirect:/admin/product";
+    public String postDeleteUser(Model model, @ModelAttribute("newProduct") Product mrLee, RedirectAttributes redirectAttributes) {
+        try {
+            this.productService.deleteAProduct(mrLee.getId());
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa sản phẩm thành công!");
+            return "redirect:/admin/product";
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa sản phẩm này vì đang được sử dụng trong đơn hàng!");
+            return "redirect:/admin/product";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra khi xóa sản phẩm: ");
+            return "redirect:/admin/product";
+        }
     }
 
     @GetMapping("/admin/product/{id}")

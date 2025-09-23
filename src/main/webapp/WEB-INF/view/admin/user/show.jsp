@@ -26,29 +26,28 @@
                                 <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
                                 <li class="breadcrumb-item active">Users</li>
                             </ol>
-                            <div class="mt-5">
-                                <div class="row">
-                                    <div class="col-12 mx-auto">
+                                <div class="mt-5">
+                                    <!-- Alert Messages -->
+                                    <c:if test="${not empty successMessage}">
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                            <i class="fas fa-check-circle me-2"></i>
+                                            ${successMessage}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    </c:if>
+                                    
+                                    <c:if test="${not empty errorMessage}">
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            ${errorMessage}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                    </c:if>
+                                    
+                                    <div class="row">
+                                        <div class="col-12 mx-auto">
                                         <div class="d-flex justify-content-between">
                                             <h3>Table users</h3>
-                                            <c:if test="${not empty errorMessage}">
-                                                <h4 class="alert alert-danger alert-dismissible fade show"
-                                                    id="errorAlert" role="alert">
-                                                    ${errorMessage}
-                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                        aria-label="Close"></button>
-                                                </h4>
-                                            </c:if>
-
-                                            <c:if test="${not empty successMessage}">
-                                                <h4 class="alert alert-success alert-dismissible fade show"
-                                                    id="successAlert" role="alert">
-                                                    ${successMessage}
-                                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                        aria-label="Close"></button>
-                                                </h4>
-                                            </c:if>
-
                                             <a href="/admin/user/create" class="btn btn-primary">Create a user</a>
                                         </div>
 
@@ -92,13 +91,15 @@
                                                         href="/admin/user?page=${currentPage - 1}" tabindex="-1"
                                                         aria-disabled="true">Previous</a>
                                                 </li>
-                                                <c:forEach begin="0" end="${totalPage-1}" varStatus="loop">
-                                                    <li class="page-item">
-                                                        <a class="${(loop.index + 1) eq currentPage ? 'active page-link' : 'page-link'}"
-                                                            href="/admin/user?page=${loop.index + 1}">${loop.index
-                                                            + 1}</a>
-                                                    </li>
-                                                </c:forEach>
+                                                <c:if test="${totalPage > 0}">
+                                                    <c:forEach begin="0" end="${totalPage-1}" varStatus="loop">
+                                                        <li class="page-item">
+                                                            <a class="${(loop.index + 1) eq currentPage ? 'active page-link' : 'page-link'}"
+                                                                href="/admin/user?page=${loop.index + 1}">${loop.index
+                                                                + 1}</a>
+                                                        </li>
+                                                    </c:forEach>
+                                                </c:if>
                                                 <li>
                                                     <a class="${totalPage eq currentPage ? 'disabled page-link' : 'page-link'}"
                                                         href="/admin/user?page=${currentPage + 1}">Next</a>
@@ -115,10 +116,21 @@
                     <jsp:include page="../layout/footer.jsp" />
                 </div>
             </div>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-                crossorigin="anonymous"></script>
-            <script src="/js/scripts.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+                    crossorigin="anonymous"></script>
+                <script src="/js/scripts.js"></script>
+                
+                <!-- Auto-hide alerts -->
+                <script>
+                    setTimeout(function() {
+                        var alerts = document.querySelectorAll('.alert');
+                        alerts.forEach(function(alert) {
+                            var bsAlert = new bootstrap.Alert(alert);
+                            bsAlert.close();
+                        });
+                    }, 5000);
+                </script>
 
-        </body>
+            </body>
 
         </html>

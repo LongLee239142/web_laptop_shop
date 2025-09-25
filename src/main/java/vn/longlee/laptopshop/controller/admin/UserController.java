@@ -176,7 +176,7 @@ public class UserController {
             }
             
             this.userService.deleteAUser(userToDelete.getId());
-            this.imageService.deleteImage(userToDelete.getAvatar(), "avatar");
+            if(userToDelete.getAvatar() != null){this.imageService.deleteImage(userToDelete.getAvatar(), "avatar");}
             redirectAttributes.addFlashAttribute("successMessage", "Xóa người dùng thành công!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa người dùng: ");

@@ -88,7 +88,10 @@
                                                     <p style="font-size: 13px;">${product.shortDesc}</p>
                                                     <div class="d-flex  flex-lg-wrap justify-content-center flex-column">
                                                         <p style="font-size: 15px; text-align: center; width: 100%;" class="text-dark  fw-bold mb-3">
-                                                            <fmt:formatNumber type="number" value="${product.price}" /> đ
+                                                            <fmt:formatNumber type="currency" 
+                                                                currencyCode="VND" 
+                                                                value="${product.price}" 
+                                                                pattern="#,##0" />
                                                         </p>
                                                         <form action="/add-product-to-cart/${product.id}" method="post">
                                                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />

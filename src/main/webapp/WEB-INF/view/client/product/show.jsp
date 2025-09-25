@@ -35,6 +35,109 @@
 
                     <!-- Template Stylesheet -->
                     <link href="/client/css/style.css" rel="stylesheet">
+                    
+                    <!-- Custom Pagination Styles -->
+                    <style>
+                        .pagination-wrapper {
+                            margin: 2rem 0;
+                        }
+                        
+                        .pagination {
+                            margin: 0;
+                            display: flex;
+                            list-style: none;
+                            padding: 0;
+                        }
+                        
+                        .page-item {
+                            margin: 0 2px;
+                        }
+                        
+                        .page-link {
+                            display: block;
+                            padding: 0.5rem 0.75rem;
+                            color: #ffc800;
+                            text-decoration: none;
+                            background-color: #fff;
+                            border: 1px solid #dee2e6;
+                            border-radius: 0.375rem;
+                            transition: all 0.3s ease;
+                            min-width: 40px;
+                            text-align: center;
+                        }
+                        
+                        .page-link:hover {
+                            color: #0056b3;
+                            background-color: #e9ecef;
+                            border-color: #dee2e6;
+                        }
+                        
+                        .page-link:focus {
+                            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+                            outline: none;
+                        }
+                        
+                        .page-item.active .page-link {
+                            background-color: #ffc800;
+                            border-color: #ffc800;
+                            color: white;
+                        }
+                        
+                        .page-item.disabled .page-link {
+                            color: #6c757d;
+                            background-color: #fff;
+                            border-color: #dee2e6;
+                            cursor: not-allowed;
+                            opacity: 0.6;
+                        }
+                        
+                        .page-item.disabled .page-link:hover {
+                            color: #6c757d;
+                            background-color: #fff;
+                            border-color: #dee2e6;
+                        }
+                        
+                        .page-link.disabled {
+                            color: #6c757d;
+                            background-color: #fff;
+                            border-color: #dee2e6;
+                            cursor: not-allowed;
+                            opacity: 0.6;
+                        }
+                        
+                        .page-link.disabled:hover {
+                            color: #6c757d;
+                            background-color: #fff;
+                            border-color: #dee2e6;
+                        }
+                        
+                        /* Mobile responsiveness */
+                        @media (max-width: 768px) {
+                            .pagination {
+                                flex-wrap: wrap;
+                                justify-content: center;
+                            }
+                            
+                            .page-link {
+                                padding: 0.375rem 0.5rem;
+                                font-size: 0.875rem;
+                                margin: 0 1px;
+                                min-width: 35px;
+                            }
+                        }
+                        
+                        @media (max-width: 576px) {
+                            .page-link {
+                                padding: 0.25rem 0.375rem;
+                                font-size: 0.8rem;
+                                min-width: 30px;
+                            }
+                            
+                            .page-item {
+                                margin: 0 1px;
+                            }
+                        }
+                    </style>
                 </head>
 
                 <body>
@@ -223,9 +326,10 @@
                                                                 class="d-flex  flex-lg-wrap justify-content-center flex-column">
                                                                 <p style="font-size: 15px; text-align: center; width: 100%;"
                                                                     class="text-dark  fw-bold mb-3">
-                                                                    <fmt:formatNumber type="number"
-                                                                        value="${product.price}" />
-                                                                    đ
+                                                                    <fmt:formatNumber type="currency" 
+                                                                        currencyCode="VND" 
+                                                                        value="${product.price}" 
+                                                                        pattern="#,##0" />
                                                                 </p>
                                                                 <form action="/add-product-to-cart/${product.id}"
                                                                     method="post">
@@ -244,33 +348,57 @@
                                                 </div>
                                             </c:forEach>
 
-                                            <c:if test="${totalPage > 0}">
-                                                <div class="pagination d-flex justify-content-center mt-5">
-
-                                                    <li class="page-item ">
-                                                        <a class="${1 eq currentPage ? 'disabled page-link' : 'page-link'}"
-                                                            href="/products?page=${currentPage - 1}${queryString}"
-                                                            aria-label="Previous"> <span
-                                                                aria-hidden="true">&laquo;</span></a>
-                                                    </li>
-                                                    <c:if test="${totalPage > 0}">
-                                                        <c:forEach begin="0" end="${totalPage - 1}" varStatus="loop">
-                                                            <li class="page-item">
-                                                                <a class="${(loop.index + 1) eq currentPage ? 'active page-link' : 'page-link'}"
-                                                                    href="/products?page=${loop.index + 1}${queryString}">
-                                                                    ${loop.index + 1}
-                                                                </a>
+                                            <c:if test="${totalPage > 1}">
+                                                <div class="pagination-wrapper mt-5">
+                                                    <nav aria-label="Product pagination">
+                                                        <ul class="pagination justify-content-center">
+                                                            <!-- Previous Button -->
+                                                            <li class="page-item ${currentPage <= 1 ? 'disabled' : ''}">
+                                                                <c:choose>
+                                                                    <c:when test="${currentPage <= 1}">
+                                                                        <span class="page-link disabled" aria-label="Previous">
+                                                                            <i class="fas fa-chevron-left"></i>
+                                                                        </span>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <a class="page-link" href="/products?page=${currentPage - 1}${queryString}" aria-label="Previous">
+                                                                            <i class="fas fa-chevron-left"></i>
+                                                                        </a>
+                                                                    </c:otherwise>
+                                                                </c:choose>
                                                             </li>
-                                                        </c:forEach>
-                                                    </c:if>
-                                                    <li class="page-item">
-                                                        <a class="${totalPages eq currentPage ? 'disabled page-link' : 'page-link'}"
-                                                            href="/products?page=${currentPage + 1}${queryString}"
-                                                            aria-label="Next">
-                                                            <span aria-hidden="true">&raquo;</span>
-                                                        </a>
-                                                    </li>
-
+                                                            
+                                                            <!-- Page Numbers -->
+                                                            <c:forEach begin="1" end="${totalPage}" var="pageNum">
+                                                                <li class="page-item ${pageNum eq currentPage ? 'active' : ''}">
+                                                                    <c:choose>
+                                                                        <c:when test="${pageNum eq currentPage}">
+                                                                            <span class="page-link active">${pageNum}</span>
+                                                                        </c:when>
+                                                                        <c:otherwise>
+                                                                            <a class="page-link" href="/products?page=${pageNum}${queryString}">${pageNum}</a>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
+                                                                </li>
+                                                            </c:forEach>
+                                                            
+                                                            <!-- Next Button -->
+                                                            <li class="page-item ${currentPage >= totalPage ? 'disabled' : ''}">
+                                                                <c:choose>
+                                                                    <c:when test="${currentPage >= totalPage}">
+                                                                        <span class="page-link disabled" aria-label="Next">
+                                                                            <i class="fas fa-chevron-right"></i>
+                                                                        </span>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <a class="page-link" href="/products?page=${currentPage + 1}${queryString}" aria-label="Next">
+                                                                            <i class="fas fa-chevron-right"></i>
+                                                                        </a>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </li>
+                                                        </ul>
+                                                    </nav>
                                                 </div>
                                             </c:if>
                                         </div>
@@ -300,6 +428,35 @@
 
                     <!-- Template Javascript -->
                     <script src="/client/js/main.js"></script>
+                    
+                    <!-- Pagination Enhancement Script -->
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            // Simple pagination functionality
+                            const pagination = document.querySelector('.pagination');
+                            if (pagination) {
+                                // Prevent click on disabled items
+                                const pageLinks = pagination.querySelectorAll('.page-link');
+                                pageLinks.forEach(link => {
+                                    link.addEventListener('click', function(e) {
+                                        const parentLi = this.closest('.page-item');
+                                        
+                                        // Prevent click on disabled items
+                                        if (parentLi.classList.contains('disabled') || this.classList.contains('disabled')) {
+                                            e.preventDefault();
+                                            return false;
+                                        }
+                                    });
+                                });
+                                
+                                // Add tooltips for disabled buttons
+                                const disabledLinks = pagination.querySelectorAll('.page-item.disabled .page-link, .page-link.disabled');
+                                disabledLinks.forEach(link => {
+                                    link.setAttribute('title', 'This page is not available');
+                                });
+                            }
+                        });
+                    </script>
                 </body>
 
                 </html>

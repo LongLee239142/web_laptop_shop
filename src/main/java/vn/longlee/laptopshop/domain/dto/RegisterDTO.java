@@ -7,7 +7,7 @@ import vn.longlee.laptopshop.service.validator.RegisterChecked;
 @RegisterChecked
 public class RegisterDTO {
 
-    @Size(min = 3, message = "FirstName must have a minimum of 3 characters ")
+    @Size(min = 2, message = "FirstName must have a minimum of 2 characters ")
     private String firstName;
 
     private String lastName;

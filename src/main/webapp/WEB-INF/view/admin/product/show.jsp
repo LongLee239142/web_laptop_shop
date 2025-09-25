@@ -73,7 +73,8 @@
                                                             <td>
                                                                 <p class="mb-0 mt-4">
                                                                     <fmt:formatNumber type="number"
-                                                                        value="${product.price}" /> đ
+                                                                        value="${product.price}" 
+                                                                        pattern="#,##0" /> đ
                                                                 </p>
                                                             </td>
                                                             <td>${product.factory}</td>

@@ -150,7 +150,7 @@
         const priceElement = $(`p[data-cart-detail-id='${id}']`);
         if (priceElement.length) {
             const newPrice = price * newVal;
-            priceElement.text(formatCurrency(newPrice.toFixed(2)) + " đ");
+            priceElement.text(formatCurrency(newPrice.toFixed(2)));
         }
 
         // Update total price
@@ -159,7 +159,7 @@
             if (totalPriceElement.length) {
                 let currentTotal = parseFloat(totalPriceElement.attr("data-cart-total-price")) || 0;
                 let newTotal = currentTotal + change * price;
-                totalPriceElement.text(formatCurrency(newTotal.toFixed(2)) + " đ");
+                totalPriceElement.text(formatCurrency(newTotal.toFixed(2)));
                 totalPriceElement.attr("data-cart-total-price", newTotal);
             }
         }, 300);
@@ -181,6 +181,41 @@
         });
         return formatter.format(value);
     }
+
+    // Format all currency values on page load
+    function formatAllCurrencyValues() {
+        // Format price values in cart
+        $('p[data-cart-detail-id]').each(function() {
+            const text = $(this).text().trim();
+            const number = parseFloat(text.replace(/[^\d]/g, ''));
+            if (!isNaN(number)) {
+                $(this).text(formatCurrency(number));
+            }
+        });
+
+        // Format total price values
+        $('p[data-cart-total-price]').each(function() {
+            const text = $(this).text().trim();
+            const number = parseFloat(text.replace(/[^\d]/g, ''));
+            if (!isNaN(number)) {
+                $(this).text(formatCurrency(number));
+            }
+        });
+
+        // Format price column values
+        $('td p').each(function() {
+            const text = $(this).text().trim();
+            const number = parseFloat(text.replace(/[^\d]/g, ''));
+            if (!isNaN(number) && number > 0) {
+                $(this).text(formatCurrency(number));
+            }
+        });
+    }
+
+    // Call formatAllCurrencyValues when page loads
+    $(document).ready(function() {
+        formatAllCurrencyValues();
+    });
     //handle filter products
     $('#btnFilter').click(function (event) {
         event.preventDefault();

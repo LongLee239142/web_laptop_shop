@@ -110,7 +110,6 @@
                                                 <td>
                                                     <p class="mb-0 mt-4">
                                                         <fmt:formatNumber type="number" value="${orderDetail.price}" />
-                                                        đ
                                                     </p>
                                                 </td>
                                                 <td>

@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -61,7 +62,9 @@ public class HomePageController {
     @PostMapping("/register")
     public String handleRegister(
             @ModelAttribute("registerUser") @Valid RegisterDTO registerDTO,
-            BindingResult bindingResult) {
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            Model model) {
 
         // validate
         if (bindingResult.hasErrors()) {
@@ -76,6 +79,7 @@ public class HomePageController {
         user.setRole(this.userService.getRoleByName("USER"));
         // save
         this.userService.handleSaveUser(user);
+        redirectAttributes.addFlashAttribute("registrationSuccess", "Đăng ký tài khoản thành công! Vui lòng đăng nhập để tiếp tục.");
         return "redirect:/login";
 
     }
@@ -84,6 +88,33 @@ public class HomePageController {
     public String getLoginPage(Model model) {
 
         return "client/auth/login";
+    }
+
+    @PostMapping("/register-alert")
+    public String handleRegisterWithAlert(
+            @ModelAttribute("registerUser") @Valid RegisterDTO registerDTO,
+            BindingResult bindingResult,
+            Model model) {
+
+        // validate
+        if (bindingResult.hasErrors()) {
+            return "client/auth/register";
+        }
+
+        User user = this.userService.registerDTOtoUser(registerDTO);
+
+        String hashPassword = this.passwordEncoder.encode(user.getPassword());
+
+        user.setPassword(hashPassword);
+        user.setRole(this.userService.getRoleByName("USER"));
+        // save
+        this.userService.handleSaveUser(user);
+        
+        // Option 2: Show success message on register page
+        model.addAttribute("registrationSuccess", "Đăng ký tài khoản thành công! Vui lòng đăng nhập để tiếp tục.");
+        model.addAttribute("registerUser", new RegisterDTO()); // Reset form
+        return "client/auth/register";
+
     }
 
     @GetMapping("/access-deny")

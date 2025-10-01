@@ -226,7 +226,7 @@
                                                 </div>
                                                 <div class="form-check form-check-inline">
                                                     <input class="form-check-input" type="checkbox" id="target-4"
-                                                        value="MONG-NHE">
+                                                        value="ThinAndLight">
                                                     <label class="form-check-label" for="target-4">Mỏng nhẹ</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">

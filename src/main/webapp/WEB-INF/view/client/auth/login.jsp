@@ -348,6 +348,11 @@
                             <i class="fas fa-check-circle me-2"></i>Logout successful.
                         </div>
                     </c:if>
+                    <c:if test="${registrationSuccess != null}">
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>${registrationSuccess}
+                        </div>
+                    </c:if>
 
                     <!-- Email -->
                     <div class="form-group">

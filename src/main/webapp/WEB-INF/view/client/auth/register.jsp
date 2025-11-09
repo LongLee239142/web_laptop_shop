@@ -584,6 +584,18 @@
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 return emailRegex.test(email);
             }
+            
+            // Add enter key support for form submission
+            const submitBtn = form.querySelector('.btn-register');
+            inputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' || e.keyCode === 13) {
+                        e.preventDefault();
+                        // Trigger form submission by clicking the submit button
+                        submitBtn.click();
+                    }
+                });
+            });
         });
     </script>
 </body>

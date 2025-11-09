@@ -502,8 +502,10 @@
             // Add enter key support for form submission
             inputs.forEach(input => {
                 input.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        form.dispatchEvent(new Event('submit'));
+                    if (e.key === 'Enter' || e.keyCode === 13) {
+                        e.preventDefault();
+                        // Trigger form submission by clicking the submit button
+                        submitBtn.click();
                     }
                 });
             });

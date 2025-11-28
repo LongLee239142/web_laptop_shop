@@ -90,11 +90,11 @@
                                                     </div>
                                                 </th>
                                                 <td>
-                                                    <p class="mb-0 mt-4">
+                                                <div class="mb-0 mt-4">
                                                         <a href="/product/${cartDetail.product.id}" target="_blank">
                                                             ${cartDetail.product.name}
                                                         </a>
-                                                    </p>
+                                                </div>
                                                 </td>
                                                 <td>
                                                     <p class="mb-0 mt-4">

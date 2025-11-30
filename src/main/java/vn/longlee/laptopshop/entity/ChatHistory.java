@@ -6,7 +6,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import vn.longlee.laptopshop.domain.User;
 
 @Entity
 @Table(name = "chat_history")
@@ -20,6 +23,11 @@ public class ChatHistory {
     private String botResponse;
     private LocalDateTime timestamp;
     
+    // Quan hệ với User - có thể null nếu user chưa đăng nhập
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+    
     public ChatHistory() {
         this.timestamp = LocalDateTime.now();
     }
@@ -27,6 +35,13 @@ public class ChatHistory {
     public ChatHistory(String userMessage, String botResponse) {
         this.userMessage = userMessage;
         this.botResponse = botResponse;
+        this.timestamp = LocalDateTime.now();
+    }
+    
+    public ChatHistory(String userMessage, String botResponse, User user) {
+        this.userMessage = userMessage;
+        this.botResponse = botResponse;
+        this.user = user;
         this.timestamp = LocalDateTime.now();
     }
 
@@ -61,5 +76,13 @@ public class ChatHistory {
 
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 } 

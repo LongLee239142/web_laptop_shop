@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import vn.longlee.laptopshop.domain.User;
 import vn.longlee.laptopshop.entity.ChatHistory;
 import vn.longlee.laptopshop.repository.ChatHistoryRepository;
 import vn.longlee.laptopshop.service.ChatService;
@@ -142,16 +143,22 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public String getReply(String message) {
+        return getReply(message, null);
+    }
+
+    @Override
+    public String getReply(String message, User user) {
         if (message == null || message.trim().isEmpty()) {
             return "Xin lỗi, tôi không nhận được tin nhắn của bạn.";
         }
 
         try {
+            String originalMessage = message;
             message = message.toLowerCase().trim();
             String response = processMessage(message);
             
-            // Save chat history to database
-            ChatHistory chatHistory = new ChatHistory(message, response);
+            // Save chat history to database với user
+            ChatHistory chatHistory = new ChatHistory(originalMessage, response, user);
             chatHistoryRepository.save(chatHistory);
             
             return response;
@@ -225,5 +232,20 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public List<ChatHistory> getChatHistory() {
         return chatHistoryRepository.findAllOrderByTimestampDesc();
+    }
+
+    @Override
+    public List<ChatHistory> getChatHistoryByUser(User user) {
+        if (user == null) {
+            return List.of();
+        }
+        return chatHistoryRepository.findByUserOrderByTimestampAsc(user);
+    }
+
+    @Override
+    public void deleteChatHistoryByUser(User user) {
+        if (user != null) {
+            chatHistoryRepository.deleteByUser(user);
+        }
     }
 }

@@ -6,9 +6,9 @@
                 <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">
                     <div class="row g-4">
                         <div class="col-lg-3">
-                            <a href="https://www.facebook.com/long.ld911?locale=vi_VN" target="_blank">
+                            <a href="https://www.facebook.com/long.phewn.758/?locale=vi_VN" target="_blank">
                                 <h1 class="text-primary mb-0">Laptopshop</h1>
-                                <p class="text-secondary mb-0">@hoidanit</p>
+                                <p class="text-secondary mb-0">@longleedev</p>
                             </a>
                         </div>
                     </div>
@@ -36,9 +36,9 @@
                     <div class="col-lg-3 col-md-6">
                         <div class="footer-item">
                             <h4 class="text-light mb-3">Contact</h4>
-                            <p>Author:Hỏi Dân IT</p>
-                            <p>Website: <a href="https://www.facebook.com/long.ld911?locale=vi_VN" target="_blank">
-                                    hoidanit.vn</a></p>
+                            <p>Author:LongLeeDev</p>
+                            <p>Website: <a href="https://www.facebook.com/long.phewn.758/?locale=vi_VN" target="_blank">
+                                    longleedev.vn</a></p>
                         </div>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                 <div class="row">
                     <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
                         <span class="text-light"><a href="https://www.facebook.com/long.ld911?locale=vi_VN"
-                                target="_blank"><i class="fas fa-copyright text-light me-2"></i>Hỏi Dân IT</a>, All
+                                target="_blank"><i class="fas fa-copyright text-light me-2"></i>LongLeeDev</a>, All
                             right
                             reserved.</span>
                     </div>

@@ -143,7 +143,6 @@
                                                 value="${orderDetail.price * orderDetail.quantity}" /> đ
                                         </p>
                                     </td>
-
                                     <td></td>
                                 </tr>
                             </c:forEach>

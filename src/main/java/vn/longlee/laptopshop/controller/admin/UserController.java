@@ -65,7 +65,7 @@ public class UserController {
             }
 
         } catch (NumberFormatException | NullPointerException e) {
-            page = 1; // Mặc định về trang 1 nếu có lỗi
+            page = 1;
         }
         Pageable pageable = PageRequest.of(page - 1, 5);
         Page<User> users = this.userService.getAllUsers(pageable);

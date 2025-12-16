@@ -93,7 +93,7 @@ public class UserController {
 
     @PostMapping(value = "/admin/user/create")
     public String createUserPage(Model model,
-            @ModelAttribute("newUser") @Valid User hoidanit,
+            @ModelAttribute("newUser") @Valid User mrlee,
             BindingResult newUserBindingResult,
             @RequestParam("hoidanitFile") MultipartFile file) {
         // validate
@@ -102,11 +102,11 @@ public class UserController {
         }
 
         String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
-        String hashPassword = this.PasswordEncoder.encode(hoidanit.getPassword());
-        hoidanit.setAvatar(avatar);
-        hoidanit.setPassword(hashPassword);
-        hoidanit.setRole(this.userService.getRoleByName(hoidanit.getRole().getName()));
-        this.userService.handleSaveUser(hoidanit);
+        String hashPassword = this.PasswordEncoder.encode(mrlee.getPassword());
+        mrlee.setAvatar(avatar);
+        mrlee.setPassword(hashPassword);
+        mrlee.setRole(this.userService.getRoleByName(mrlee.getRole().getName()));
+        this.userService.handleSaveUser(mrlee);
         // save
         return "redirect:/admin/user";
     }
@@ -119,7 +119,7 @@ public class UserController {
     }
 
     @PostMapping("/admin/user/update")
-    public String postUpdateUser(Model model, @ModelAttribute("newUser") @Valid User hoidanit,
+    public String postUpdateUser(Model model, @ModelAttribute("newUser") @Valid User mrlee,
             BindingResult newUserBindingResult,
             @RequestParam("hoidanitFile") MultipartFile file,
             RedirectAttributes redirectAttributes) {
@@ -129,12 +129,12 @@ public class UserController {
         }
         
         User currentLoggedInUser = getCurrentUser();
-        User currentUser = this.userService.getUserById(hoidanit.getId());
+        User currentUser = this.userService.getUserById(mrlee.getId());
         
         if (currentUser != null) {
             // Kiểm tra nếu admin đang cố gắng đổi role của chính mình
             if (currentLoggedInUser != null && currentLoggedInUser.getId() == currentUser.getId()) {
-                if (!currentUser.getRole().getName().equals(hoidanit.getRole().getName())) {
+                if (!currentUser.getRole().getName().equals(mrlee.getRole().getName())) {
                     redirectAttributes.addFlashAttribute("errorMessage", "Bạn không thể thay đổi role của chính mình!");
                     return "redirect:/admin/user";
                 }
@@ -144,10 +144,10 @@ public class UserController {
                 String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
                 currentUser.setAvatar(avatar);
             }
-            currentUser.setAddress(hoidanit.getAddress());
-            currentUser.setFullName(hoidanit.getFullName());
-            currentUser.setPhone(hoidanit.getPhone());
-            currentUser.setRole(this.userService.getRoleByName(hoidanit.getRole().getName()));
+            currentUser.setAddress(mrlee.getAddress());
+            currentUser.setFullName(mrlee.getFullName());
+            currentUser.setPhone(mrlee.getPhone());
+            currentUser.setRole(this.userService.getRoleByName(mrlee.getRole().getName()));
 
             this.userService.handleSaveUser(currentUser);
             redirectAttributes.addFlashAttribute("successMessage", "Cập nhật người dùng thành công!");

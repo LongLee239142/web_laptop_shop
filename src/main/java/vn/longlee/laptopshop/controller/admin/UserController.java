@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
 import vn.longlee.laptopshop.domain.User;
+import vn.longlee.laptopshop.domain.dto.CreateUserDTO;
 import vn.longlee.laptopshop.service.ImageService;
 import vn.longlee.laptopshop.service.UploadService;
 import vn.longlee.laptopshop.service.UserService;
@@ -87,27 +88,39 @@ public class UserController {
 
     @GetMapping("/admin/user/create") // GET
     public String getCreateUserPage(Model model) {
-        model.addAttribute("newUser", new User());
+        model.addAttribute("newUser", new CreateUserDTO());
         return "admin/user/create";
     }
 
     @PostMapping(value = "/admin/user/create")
     public String createUserPage(Model model,
-            @ModelAttribute("newUser") @Valid User mrlee,
+            @ModelAttribute("newUser") @Valid CreateUserDTO createUserDTO,
             BindingResult newUserBindingResult,
-            @RequestParam("hoidanitFile") MultipartFile file) {
+            @RequestParam("hoidanitFile") MultipartFile file,
+            RedirectAttributes redirectAttributes) {
         // validate
         if (newUserBindingResult.hasErrors()) {
             return "admin/user/create";
         }
 
+        // Convert DTO to User entity
+        User user = this.userService.createUserDTOtoUser(createUserDTO);
+        
+        // Handle avatar upload
         String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
-        String hashPassword = this.PasswordEncoder.encode(mrlee.getPassword());
-        mrlee.setAvatar(avatar);
-        mrlee.setPassword(hashPassword);
-        mrlee.setRole(this.userService.getRoleByName(mrlee.getRole().getName()));
-        this.userService.handleSaveUser(mrlee);
-        // save
+        user.setAvatar(avatar);
+        
+        // Hash password
+        String hashPassword = this.PasswordEncoder.encode(user.getPassword());
+        user.setPassword(hashPassword);
+        
+        // Set role (default to USER if not specified)
+        String roleName = createUserDTO.getRoleName() != null ? createUserDTO.getRoleName() : "USER";
+        user.setRole(this.userService.getRoleByName(roleName));
+        
+        // Save user
+        this.userService.handleSaveUser(user);
+        redirectAttributes.addFlashAttribute("successMessage", "Tạo người dùng thành công!");
         return "redirect:/admin/user";
     }
 

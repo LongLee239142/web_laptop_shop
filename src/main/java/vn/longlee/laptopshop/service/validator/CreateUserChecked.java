@@ -9,15 +9,16 @@ import java.lang.annotation.Target;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
-@Constraint(validatedBy = RegisterValidator.class)
-@Target({ ElementType.TYPE }) // Adjusted to apply to the class level
+@Constraint(validatedBy = CreateUserValidator.class)
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface RegisterChecked {
+public @interface CreateUserChecked {
 
-    String message() default "User register validation failed";
+    String message() default "User creation validation failed";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 }
+

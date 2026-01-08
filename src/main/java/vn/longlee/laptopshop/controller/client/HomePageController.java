@@ -20,7 +20,7 @@ import jakarta.validation.Valid;
 import vn.longlee.laptopshop.domain.Order;
 import vn.longlee.laptopshop.domain.Product;
 import vn.longlee.laptopshop.domain.User;
-import vn.longlee.laptopshop.domain.dto.RegisterDTO;
+import vn.longlee.laptopshop.domain.dto.CreateUserDTO;
 import vn.longlee.laptopshop.service.OrderService;
 import vn.longlee.laptopshop.service.ProductService;
 import vn.longlee.laptopshop.service.UserService;
@@ -55,13 +55,13 @@ public class HomePageController {
 
     @GetMapping("/register")
     public String getRegisterPage(Model model) {
-        model.addAttribute("registerUser", new RegisterDTO());
+        model.addAttribute("registerUser", new CreateUserDTO());
         return "client/auth/register";
     }
 
     @PostMapping("/register")
     public String handleRegister(
-            @ModelAttribute("registerUser") @Valid RegisterDTO registerDTO,
+            @ModelAttribute("registerUser") @Valid CreateUserDTO createUserDTO,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
             Model model) {
@@ -71,13 +71,17 @@ public class HomePageController {
             return "client/auth/register";
         }
 
-        User user = this.userService.registerDTOtoUser(registerDTO);
+        // Convert DTO to User entity
+        User user = this.userService.createUserDTOtoUser(createUserDTO);
 
+        // Hash password
         String hashPassword = this.passwordEncoder.encode(user.getPassword());
-
         user.setPassword(hashPassword);
+        
+        // Set role to USER for client registration
         user.setRole(this.userService.getRoleByName("USER"));
-        // save
+        
+        // Save user
         this.userService.handleSaveUser(user);
         redirectAttributes.addFlashAttribute("registrationSuccess", "Đăng ký tài khoản thành công! Vui lòng đăng nhập để tiếp tục.");
         return "redirect:/login";
@@ -92,7 +96,7 @@ public class HomePageController {
 
     @PostMapping("/register-alert")
     public String handleRegisterWithAlert(
-            @ModelAttribute("registerUser") @Valid RegisterDTO registerDTO,
+            @ModelAttribute("registerUser") @Valid CreateUserDTO createUserDTO,
             BindingResult bindingResult,
             Model model) {
 
@@ -101,18 +105,22 @@ public class HomePageController {
             return "client/auth/register";
         }
 
-        User user = this.userService.registerDTOtoUser(registerDTO);
+        // Convert DTO to User entity
+        User user = this.userService.createUserDTOtoUser(createUserDTO);
 
+        // Hash password
         String hashPassword = this.passwordEncoder.encode(user.getPassword());
-
         user.setPassword(hashPassword);
+        
+        // Set role to USER for client registration
         user.setRole(this.userService.getRoleByName("USER"));
-        // save
+        
+        // Save user
         this.userService.handleSaveUser(user);
         
         // Option 2: Show success message on register page
         model.addAttribute("registrationSuccess", "Đăng ký tài khoản thành công! Vui lòng đăng nhập để tiếp tục.");
-        model.addAttribute("registerUser", new RegisterDTO()); // Reset form
+        model.addAttribute("registerUser", new CreateUserDTO()); // Reset form
         return "client/auth/register";
 
     }

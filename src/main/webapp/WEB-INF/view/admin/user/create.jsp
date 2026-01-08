@@ -64,7 +64,16 @@
                                                         class="form-control ${not empty errorPassword? 'is-invalid':''}"
                                                         path="password" />
                                                     <form:errors path="password" cssClass="invalid-feedback" />
-
+                                                </div>
+                                                <div class="mb-3 col-12 col-md-6">
+                                                    <c:set var="errorConfirmPassword">
+                                                        <form:errors path="confirmPassword" />
+                                                    </c:set>
+                                                    <label class="form-label">Confirm Password:</label>
+                                                    <form:input type="password"
+                                                        class="form-control ${not empty errorConfirmPassword? 'is-invalid':''}"
+                                                        path="confirmPassword" />
+                                                    <form:errors path="confirmPassword" cssClass="invalid-feedback" />
                                                 </div>
                                                 <div class="mb-3 col-12 col-md-6">
                                                     <c:set var="errorPhone">
@@ -93,7 +102,7 @@
 
                                                 <div class="mb-3 col-12 col-md-6">
                                                     <label class="form-label">Role:</label>
-                                                    <form:select class="form-select" path="role.name">
+                                                    <form:select class="form-select" path="roleName">
                                                         <form:option value="ADMIN">ADMIN</form:option>
                                                         <form:option value="USER">USER</form:option>
                                                     </form:select>

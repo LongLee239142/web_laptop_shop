@@ -16,7 +16,6 @@ import vn.longlee.laptopshop.domain.OrderDetail;
 import vn.longlee.laptopshop.domain.Product;
 import vn.longlee.laptopshop.domain.User;
 import vn.longlee.laptopshop.domain.dto.ProductCriteriaDTO;
-import vn.longlee.laptopshop.domain.dto.RegisterDTO;
 import vn.longlee.laptopshop.repository.CartDetailRepository;
 import vn.longlee.laptopshop.repository.CartRepository;
 import vn.longlee.laptopshop.repository.OrderDetailRepository;
@@ -121,12 +120,6 @@ public class ProductService {
         this.productRepository.deleteById(id);
     }
 
-    public User registerDTOtoUser(RegisterDTO registerDTO) {
-        User user = new User();
-        user.setFullName(registerDTO.getFirstName() + " " + registerDTO.getLastName());
-        user.setPassword(registerDTO.getPassword());
-        return user;
-    }
 
     public void handleAddProductToCart(String email, long productId, HttpSession session, long quantity) {
 

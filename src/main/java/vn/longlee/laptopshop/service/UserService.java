@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import vn.longlee.laptopshop.domain.Role;
 import vn.longlee.laptopshop.domain.User;
-import vn.longlee.laptopshop.domain.dto.RegisterDTO;
+import vn.longlee.laptopshop.domain.dto.CreateUserDTO;
 import vn.longlee.laptopshop.repository.RoleRepository;
 import vn.longlee.laptopshop.repository.UserRepository;
 
@@ -53,19 +53,37 @@ public class UserService {
         return this.roleRepository.findByName(name);
     }
 
-    public User registerDTOtoUser(RegisterDTO registerDTO) {
-        User user = new User();
-        user.setFullName(registerDTO.getFirstName() + " " + registerDTO.getLastName());
-        user.setEmail(registerDTO.getEmail());
-        user.setPassword(registerDTO.getPassword());
-        return user;
-    }
-
     public boolean checkEmailExist(String email) {
         return this.userRepository.existsByEmail(email);
     }
 
     public User getUserByEmail(String email) {
         return this.userRepository.findByEmail(email);
+    }
+
+    /**
+     * Convert CreateUserDTO to User entity
+     * This method handles both admin and client user creation
+     * 
+     * @param dto CreateUserDTO containing user information
+     * @return User entity ready to be saved
+     */
+    public User createUserDTOtoUser(CreateUserDTO dto) {
+        User user = new User();
+        
+        // Set fullName: use fullName if provided, otherwise combine firstName + lastName
+        if (dto.getFullName() != null && !dto.getFullName().trim().isEmpty()) {
+            user.setFullName(dto.getFullName());
+        } else if (dto.getFirstName() != null && !dto.getFirstName().trim().isEmpty()) {
+            String lastName = dto.getLastName() != null ? dto.getLastName() : "";
+            user.setFullName((dto.getFirstName() + " " + lastName).trim());
+        }
+        
+        user.setEmail(dto.getEmail());
+        user.setPassword(dto.getPassword()); // Will be hashed by controller
+        user.setAddress(dto.getAddress());
+        user.setPhone(dto.getPhone());
+        
+        return user;
     }
 }

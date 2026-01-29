@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import vn.longlee.laptopshop.domain.User;
+import vn.longlee.laptopshop.service.ImageService;
 import vn.longlee.laptopshop.service.UploadService;
 import vn.longlee.laptopshop.service.UserService;
 
@@ -22,10 +23,12 @@ import vn.longlee.laptopshop.service.UserService;
 public class AccountController {
     private final UserService userService;
     private final UploadService uploadService;
+    private final ImageService imageService;
 
-    public AccountController(UserService userService, UploadService uploadService) {
+    public AccountController(UserService userService, UploadService uploadService, ImageService imageService) {
         this.userService = userService;
         this.uploadService = uploadService;
+        this.imageService = imageService;
     }
 
     private User getCurrentUser() {
@@ -86,6 +89,10 @@ public class AccountController {
         }
 
         if (!file.isEmpty()) {
+            String oldAvatar = userToUpdate.getAvatar();
+            if (oldAvatar != null && !oldAvatar.isEmpty()) {
+                imageService.deleteImage(oldAvatar, "avatar");
+            }
             String avatar = uploadService.handleSaveUploadFile(file, "avatar");
             if (avatar != null && !avatar.isEmpty()) {
                 userToUpdate.setAvatar(avatar);

@@ -156,6 +156,10 @@ public class UserController {
             }
             
             if (!file.isEmpty()) {
+                String oldAvatar = currentUser.getAvatar();
+                if (oldAvatar != null && !oldAvatar.isEmpty()) {
+                    this.imageService.deleteImage(oldAvatar, "avatar");
+                }
                 String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
                 if (avatar != null && !avatar.isEmpty()) {
                     currentUser.setAvatar(avatar);

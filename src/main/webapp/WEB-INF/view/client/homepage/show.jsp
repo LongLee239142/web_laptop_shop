@@ -30,8 +30,154 @@
 
     <!-- Template Stylesheet -->
     <link href="/client/css/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .fruite-item:hover { transform: translateY(-6px); box-shadow: 0 0.5rem 1.25rem rgba(0,0,0,0.12) !important; }
+        /* === Featured Products Section Redesign === */
+        .featured-section {
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 50%, #fff 100%);
+            padding: 4rem 0 5rem;
+            font-family: 'Plus Jakarta Sans', 'Open Sans', sans-serif;
+        }
+        .featured-section .section-header {
+            margin-bottom: 2.5rem;
+        }
+        .featured-section .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--bs-primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+        .featured-section .section-label i {
+            font-size: 1rem;
+        }
+        .featured-section .section-title {
+            font-family: 'Plus Jakarta Sans', 'Raleway', sans-serif;
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.35rem;
+            letter-spacing: -0.02em;
+        }
+        .featured-section .section-desc {
+            color: #64748b;
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+        .featured-section .btn-view-all {
+            background: linear-gradient(135deg, var(--bs-primary) 0%, #0d6efd 100%);
+            color: #fff;
+            border: none;
+            padding: 0.6rem 1.4rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .featured-section .btn-view-all:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(13, 110, 253, 0.35);
+        }
+        .featured-section .product-card {
+            background: #fff;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .featured-section .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            border-color: transparent;
+        }
+        .featured-section .product-card .card-img-wrap {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+            background: #f8fafc;
+        }
+        .featured-section .product-card .card-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .featured-section .product-card:hover .card-img-wrap img {
+            transform: scale(1.08);
+        }
+        .featured-section .product-card .card-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.35rem 0.65rem;
+            border-radius: 8px;
+            letter-spacing: 0.02em;
+            box-shadow: 0 2px 8px rgba(34, 197, 94, 0.4);
+        }
+        .featured-section .product-card .card-body {
+            padding: 1.15rem 1.25rem;
+        }
+        .featured-section .product-card .card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.35rem;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .featured-section .product-card .card-desc {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 0.75rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .featured-section .product-card .card-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--bs-primary);
+            margin-bottom: 0;
+        }
+        .featured-section .product-card .card-footer {
+            padding: 0 1.25rem 1.25rem;
+            background: transparent;
+            border: none;
+        }
+        .featured-section .product-card .btn-add-cart {
+            width: 100%;
+            padding: 0.55rem 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .featured-section .product-card .btn-add-cart:hover {
+            background: var(--bs-primary);
+            color: #fff;
+            border-color: var(--bs-primary);
+        }
+        .featured-section .product-card a {
+            text-decoration: none;
+            color: inherit;
+        }
     </style>
 </head>
 
@@ -52,56 +198,54 @@
 
 
     <!-- Products Section Start -->
-    <div class="container-fluid fruite py-5">
-        <div class="container py-5">
-            <div class="tab-class text-center">
-                <div class="row g-4 mb-4">
-                    <div class="col-lg-6 text-start">
-                        <h1 class="fw-bold text-dark">Sản phẩm nổi bật</h1>
-                        <p class="text-muted mb-0">Laptop chính hãng, giá tốt</p>
+    <section class="container-fluid featured-section">
+        <div class="container">
+            <div class="row align-items-end justify-content-between section-header">
+                <div class="col-auto">
+                    <div class="section-label">
+                        <i class="fas fa-star"></i>
+                        <span>Nổi bật</span>
                     </div>
-                    <div class="col-lg-6 text-end d-flex align-items-center justify-content-lg-end">
-                        <a href="/products" class="btn btn-primary rounded-pill px-4 py-2">
-                            <i class="fas fa-th-large me-2"></i>Xem tất cả
-                        </a>
-                    </div>
+                    <h1 class="section-title">Sản phẩm nổi bật</h1>
+                    <p class="section-desc">Laptop chính hãng, giá tốt — giao nhanh, bảo hành chính thức</p>
                 </div>
-                <div class="tab-content">
-                    <div id="tab-1" class="tab-pane fade show p-0 active">
-                        <div class="row g-4">
-                            <c:forEach var="product" items="${products}">
-                                <div class="col-md-6 col-lg-4 col-xl-3">
-                                    <div class="card border-0 shadow-sm h-100 rounded-3 overflow-hidden fruite-item" style="transition: transform 0.2s, box-shadow 0.2s;">
-                                        <a href="/product/${product.id}" class="text-decoration-none text-dark">
-                                            <div class="position-relative overflow-hidden bg-light" style="height: 200px;">
-                                                <img src="/images/imageProduct/${product.image}" class="img-fluid w-100 h-100" alt="${product.name}" style="object-fit: cover;">
-                                                <span class="position-absolute top-0 start-0 m-2 badge bg-primary">Laptop</span>
-                                            </div>
-                                            <div class="card-body p-3">
-                                                <h6 class="card-title fw-semibold mb-2 text-truncate" style="font-size: 0.95rem;">${product.name}</h6>
-                                                <p class="small text-muted mb-2 text-truncate" style="font-size: 0.8rem;">${product.shortDesc}</p>
-                                                <p class="fw-bold text-primary mb-3 mb-0">
-                                                    <fmt:formatNumber type="number" value="${product.price}" pattern="#,##0" /> đ
-                                                </p>
-                                            </div>
-                                        </a>
-                                        <div class="card-footer bg-white border-0 pt-0 pb-3 px-3">
-                                            <form action="/add-product-to-cart/${product.id}" method="post" class="mb-0">
-                                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                                                <button type="submit" class="btn btn-outline-primary btn-sm w-100 rounded-pill py-2">
-                                                    <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </c:forEach>
-                        </div>
-                    </div>
+                <div class="col-auto mt-3 mt-md-0">
+                    <a href="/products" class="btn btn-view-all">
+                        <i class="fas fa-th-large me-2"></i>Xem tất cả
+                    </a>
                 </div>
             </div>
+            <div class="row g-4">
+                <c:forEach var="product" items="${products}">
+                    <div class="col-sm-6 col-lg-4 col-xl-3">
+                        <div class="card product-card">
+                            <a href="/product/${product.id}">
+                                <div class="card-img-wrap">
+                                    <img src="/images/imageProduct/${product.image}" alt="${product.name}">
+                                    <span class="card-badge">Laptop</span>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-title">${product.name}</h6>
+                                    <p class="card-desc">${product.shortDesc}</p>
+                                    <p class="card-price">
+                                        <fmt:formatNumber type="number" value="${product.price}" pattern="#,##0" /> đ
+                                    </p>
+                                </div>
+                            </a>
+                            <div class="card-footer">
+                                <form action="/add-product-to-cart/${product.id}" method="post" class="mb-0">
+                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                                    <button type="submit" class="btn btn-add-cart">
+                                        <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
         </div>
-    </div>
+    </section>
     <!-- Products Section End -->
        
 

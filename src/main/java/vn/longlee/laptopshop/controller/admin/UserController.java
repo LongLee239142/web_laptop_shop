@@ -132,12 +132,14 @@ public class UserController {
     }
 
     @PostMapping("/admin/user/update")
-    public String postUpdateUser(Model model, @ModelAttribute("newUser") @Valid User mrlee,
-            BindingResult newUserBindingResult,
+    public String postUpdateUser(Model model,
             @RequestParam("hoidanitFile") MultipartFile file,
+            @ModelAttribute("newUser") @Valid User mrlee,
+            BindingResult newUserBindingResult,
             RedirectAttributes redirectAttributes) {
         // validate
         if (newUserBindingResult.hasErrors()) {
+            model.addAttribute("newUser", mrlee);
             return "admin/user/update";
         }
         
@@ -155,7 +157,11 @@ public class UserController {
             
             if (!file.isEmpty()) {
                 String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
-                currentUser.setAvatar(avatar);
+                if (avatar != null && !avatar.isEmpty()) {
+                    currentUser.setAvatar(avatar);
+                }
+            } else if (mrlee.getAvatar() != null && !mrlee.getAvatar().isEmpty()) {
+                currentUser.setAvatar(mrlee.getAvatar());
             }
             currentUser.setAddress(mrlee.getAddress());
             currentUser.setFullName(mrlee.getFullName());

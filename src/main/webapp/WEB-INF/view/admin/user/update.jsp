@@ -56,10 +56,11 @@
                                                     <label class="form-label">Id:</label>
                                                     <form:input type="text" class="form-control" path="id" />
                                                 </div>
+                                                <%-- Hidden email: field disabled=true không gửi khi submit, cần hidden để binding/validation không lỗi --%>
+                                                <form:hidden path="email" />
                                                 <div class="mb-3">
                                                     <label class="form-label">Email:</label>
-                                                    <form:input type="email" class="form-control" path="email"
-                                                        disabled="true" />
+                                                    <input type="email" class="form-control" value="${newUser.email}" disabled="readonly" />
                                                 </div>
                                                 <div class="mb-3 col-12 col-md-6">
                                                     <c:set var="errorPhone">
@@ -93,6 +94,8 @@
                                                         <form:option value="USER">USER</form:option>
                                                     </form:select>
                                                 </div>
+                                                <%-- Hidden avatar path: giữ avatar cũ khi không chọn file mới --%>
+                                                <form:hidden path="avatar" />
                                                 <div class="mb-3 col-12 col-md-6">
                                                     <label for="avatarFile" class="form-label">Avatar:</label>
                                                     <input class="form-control" type="file" id="avatarFile"

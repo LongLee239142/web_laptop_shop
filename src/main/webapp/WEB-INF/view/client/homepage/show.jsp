@@ -30,7 +30,9 @@
 
     <!-- Template Stylesheet -->
     <link href="/client/css/style.css" rel="stylesheet">
-
+    <style>
+        .fruite-item:hover { transform: translateY(-6px); box-shadow: 0 0.5rem 1.25rem rgba(0,0,0,0.12) !important; }
+    </style>
 </head>
 
 <body>
@@ -49,71 +51,58 @@
 
 
 
-    <!-- Fruits Shop Start -->
+    <!-- Products Section Start -->
     <div class="container-fluid fruite py-5">
         <div class="container py-5">
             <div class="tab-class text-center">
-                <div class="row g-4">
-                    <div class="col-lg-4 text-start">
-                        <h1>Sản phẩm nổi bật</h1>
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-6 text-start">
+                        <h1 class="fw-bold text-dark">Sản phẩm nổi bật</h1>
+                        <p class="text-muted mb-0">Laptop chính hãng, giá tốt</p>
                     </div>
-                    <div class="col-lg-8 text-end">
-                        <ul class="nav nav-pills d-inline-flex text-center mb-5">
-                            <li class="nav-item">
-                                <a class="d-flex m-2 py-2 bg-light rounded-pill active" href="/products">
-                                    <span class="text-dark" style="width: 130px;">All Products</span>
-                                </a>
-                            </li>
-                        </ul>
+                    <div class="col-lg-6 text-end d-flex align-items-center justify-content-lg-end">
+                        <a href="/products" class="btn btn-primary rounded-pill px-4 py-2">
+                            <i class="fas fa-th-large me-2"></i>Xem tất cả
+                        </a>
                     </div>
                 </div>
                 <div class="tab-content">
                     <div id="tab-1" class="tab-pane fade show p-0 active">
                         <div class="row g-4">
-                            <div class="col-lg-12">
-                                <div class="row g-4">
-                                    <c:forEach var="product" items="${products}">
-                                        <div class="col-md-6 col-lg-4 col-xl-3">
-                                            <div class="rounded position-relative fruite-item">
-                                                <div class="fruite-img">
-                                                    <img src="/images/imageProduct/${product.image}" class="img-fluid w-100 rounded-top" alt="">
-                                                </div>
-                                                <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Laptop</div>
-                                                <div class="p-4 border border-secondary border-top-0 rounded-bottom">
-                                                    <h4 style="font-size: 15px;">
-                                                        <a href="/product/${product.id}">
-                                                            ${product.name}
-                                                        </a>
-                                                    </h4>
-                                                    <p style="font-size: 13px;">${product.shortDesc}</p>
-                                                    <div class="d-flex  flex-lg-wrap justify-content-center flex-column">
-                                                        <p style="font-size: 15px; text-align: center; width: 100%;" class="text-dark  fw-bold mb-3">
-                                                            <fmt:formatNumber type="currency" 
-                                                                currencyCode="VND" 
-                                                                value="${product.price}" 
-                                                                pattern="#,##0" />
-                                                        </p>
-                                                        <form action="/add-product-to-cart/${product.id}" method="post">
-                                                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                                                            <button class="mx-auto btn border border-secondary rounded-pill px-3 text-primary">
-                                                                <i class="fa fa-shopping-bag me-2 text-primary"></i>
-                                                                Add to cart
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </div>
+                            <c:forEach var="product" items="${products}">
+                                <div class="col-md-6 col-lg-4 col-xl-3">
+                                    <div class="card border-0 shadow-sm h-100 rounded-3 overflow-hidden fruite-item" style="transition: transform 0.2s, box-shadow 0.2s;">
+                                        <a href="/product/${product.id}" class="text-decoration-none text-dark">
+                                            <div class="position-relative overflow-hidden bg-light" style="height: 200px;">
+                                                <img src="/images/imageProduct/${product.image}" class="img-fluid w-100 h-100" alt="${product.name}" style="object-fit: cover;">
+                                                <span class="position-absolute top-0 start-0 m-2 badge bg-primary">Laptop</span>
                                             </div>
+                                            <div class="card-body p-3">
+                                                <h6 class="card-title fw-semibold mb-2 text-truncate" style="font-size: 0.95rem;">${product.name}</h6>
+                                                <p class="small text-muted mb-2 text-truncate" style="font-size: 0.8rem;">${product.shortDesc}</p>
+                                                <p class="fw-bold text-primary mb-3 mb-0">
+                                                    <fmt:formatNumber type="number" value="${product.price}" pattern="#,##0" /> đ
+                                                </p>
+                                            </div>
+                                        </a>
+                                        <div class="card-footer bg-white border-0 pt-0 pb-3 px-3">
+                                            <form action="/add-product-to-cart/${product.id}" method="post" class="mb-0">
+                                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                                                <button type="submit" class="btn btn-outline-primary btn-sm w-100 rounded-pill py-2">
+                                                    <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ
+                                                </button>
+                                            </form>
                                         </div>
-                                    </c:forEach>
+                                    </div>
                                 </div>
-                            </div>
+                            </c:forEach>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Fruits Shop End -->
+    <!-- Products Section End -->
        
 
     <jsp:include page="../layout/feature.jsp" />

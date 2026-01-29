@@ -1,66 +1,53 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
-    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-        <!-- Footer Start -->
-        <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
-            <div class="container py-5">
-                <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5) ;">
-                    <div class="row g-4">
-                        <div class="col-lg-3">
-                            <a href="https://www.facebook.com/long.phewn.758/?locale=vi_VN" target="_blank">
-                                <h1 class="text-primary mb-0">Laptopshop</h1>
-                                <p class="text-secondary mb-0">@longleedev</p>
-                            </a>
-                        </div>
-                    </div>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!-- Footer Start -->
+<footer class="container-fluid bg-dark text-white-50 pt-5 mt-5">
+    <div class="container py-5">
+        <div class="row g-4 pb-4 mb-4 border-bottom border-secondary">
+            <div class="col-lg-4">
+                <a href="/" class="text-decoration-none">
+                    <h5 class="text-primary mb-2"><i class="fas fa-laptop me-2"></i>Laptopshop</h5>
+                    <p class="mb-0 small">Sản phẩm chính hãng – Giá tốt nhất</p>
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4">
+                <h6 class="text-light mb-3">Liên kết</h6>
+                <ul class="list-unstyled small">
+                    <li class="mb-2"><a href="/" class="text-white-50 text-decoration-none">Trang chủ</a></li>
+                    <li class="mb-2"><a href="/products" class="text-white-50 text-decoration-none">Sản phẩm</a></li>
+                    <c:if test="${not empty pageContext.request.userPrincipal}">
+                        <li class="mb-2"><a href="/account" class="text-white-50 text-decoration-none">Tài khoản</a></li>
+                        <li class="mb-2"><a href="/order-history" class="text-white-50 text-decoration-none">Đơn hàng</a></li>
+                    </c:if>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-4">
+                <h6 class="text-light mb-3">Hỗ trợ</h6>
+                <ul class="list-unstyled small">
+                    <li class="mb-2"><i class="fas fa-truck me-2 text-primary"></i>Giao hàng nhanh</li>
+                    <li class="mb-2"><i class="fas fa-shield-alt me-2 text-primary"></i>Thanh toán an toàn</li>
+                    <li class="mb-2"><i class="fas fa-undo me-2 text-primary"></i>Đổi trả 30 ngày</li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-4">
+                <h6 class="text-light mb-3">Liên hệ</h6>
+                <p class="small mb-2">Long Lee Dev</p>
+                <a href="https://www.facebook.com/long.phewn.758/?locale=vi_VN" target="_blank" class="text-white-50 text-decoration-none me-3"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/long.phewn.758/" target="_blank" class="text-white-50 text-decoration-none"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid py-3 border-top border-secondary">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start small mb-2 mb-md-0">
+                    <span class="text-white-50">&copy; Long Lee Dev 2025. All rights reserved.</span>
                 </div>
-                <div class="row g-5">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-item">
-                            <h4 class="text-light mb-3">Chất lượng là ưu tiên hàng đầu</h4>
-
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="d-flex flex-column text-start footer-item">
-                            <h4 class="text-light mb-3">Shop Info</h4>
-                            <a class="btn-link" href="#">About Us</a>
-
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="d-flex flex-column text-start footer-item">
-                            <h4 class="text-light mb-3">Account</h4>
-                            <a class="btn-link" href="#">My Account</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="footer-item">
-                            <h4 class="text-light mb-3">Contact</h4>
-                            <p>Author:LongLeeDev</p>
-                            <p>Website: <a href="https://www.facebook.com/long.phewn.758/?locale=vi_VN" target="_blank">
-                                    longleedev.vn</a></p>
-                        </div>
-                    </div>
+                <div class="col-md-6 text-center text-md-end small text-white-50">
+                    Laptopshop – Dự án demo
                 </div>
             </div>
         </div>
-        <!-- Footer End -->
-
-        <!-- Copyright Start -->
-        <div class="container-fluid copyright bg-dark py-4">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        <span class="text-light"><a href="https://www.facebook.com/long.ld911?locale=vi_VN"
-                                target="_blank"><i class="fas fa-copyright text-light me-2"></i>LongLeeDev</a>, All
-                            right
-                            reserved.</span>
-                    </div>
-                    <div class="col-md-6 my-auto text-center text-md-end text-white">
-                        Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a> Distributed
-                        By <a class="border-bottom" href="https://themewagon.com">ThemeWagon</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Copyright End -->
+    </div>
+</footer>
+<!-- Footer End -->

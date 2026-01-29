@@ -119,4 +119,25 @@ public class AccountController {
         }
         return "redirect:/account";
     }
+
+    @PostMapping("/account/remove-avatar")
+    public String removeAvatar(HttpSession session, RedirectAttributes redirectAttributes) {
+        User currentUser = getCurrentUser();
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+        User userToUpdate = userService.getUserById(currentUser.getId());
+        if (userToUpdate == null) {
+            return "redirect:/account";
+        }
+        String oldAvatar = userToUpdate.getAvatar();
+        if (oldAvatar != null && !oldAvatar.isEmpty()) {
+            imageService.deleteImage(oldAvatar, "avatar");
+        }
+        userToUpdate.setAvatar(null);
+        userService.handleSaveUser(userToUpdate);
+        session.setAttribute("avatar", null);
+        redirectAttributes.addFlashAttribute("successMessage", "Đã xóa ảnh đại diện.");
+        return "redirect:/account/edit";
+    }
 }

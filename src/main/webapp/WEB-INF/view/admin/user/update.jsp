@@ -106,6 +106,13 @@
                                                     <img style="max-height: 250px; display: none;" alt="avatar preview"
                                                         id="avatarPreview" />
                                                 </div>
+                                                <c:if test="${not empty newUser.avatar}">
+                                                    <div class="col-12 mb-3">
+                                                        <button type="button" class="btn btn-outline-danger btn-sm" id="btnRemoveAvatar" data-csrf-name="${_csrf.parameterName}" data-csrf-value="${_csrf.token}" data-user-id="${newUser.id}">
+                                                            <i class="fas fa-trash-alt me-1"></i>Xóa avatar
+                                                        </button>
+                                                    </div>
+                                                </c:if>
                                                 <div class="col-12 mb-5">
                                                     <button type="submit" class="btn btn-warning">Update</button>
                                                 </div>
@@ -121,6 +128,35 @@
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
                     crossorigin="anonymous"></script>
                 <script src="/js/scripts.js"></script>
+                <script>
+                    (function () {
+                        var btn = document.getElementById('btnRemoveAvatar');
+                        if (btn) {
+                            btn.onclick = function () {
+                                if (!confirm('Xóa ảnh đại diện của user này?')) return;
+                                var form = document.createElement('form');
+                                form.method = 'post';
+                                form.action = '/admin/user/remove-avatar';
+                                var csrfName = btn.getAttribute('data-csrf-name');
+                                var csrfValue = btn.getAttribute('data-csrf-value');
+                                if (csrfName && csrfValue) {
+                                    var input = document.createElement('input');
+                                    input.type = 'hidden';
+                                    input.name = csrfName;
+                                    input.value = csrfValue;
+                                    form.appendChild(input);
+                                }
+                                var idInput = document.createElement('input');
+                                idInput.type = 'hidden';
+                                idInput.name = 'id';
+                                idInput.value = btn.getAttribute('data-user-id') || '';
+                                form.appendChild(idInput);
+                                document.body.appendChild(form);
+                                form.submit();
+                            };
+                        }
+                    })();
+                </script>
 
             </body>
 

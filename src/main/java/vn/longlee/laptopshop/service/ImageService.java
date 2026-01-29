@@ -18,6 +18,22 @@ public class ImageService {
     }
 
     /**
+     * Lấy đường dẫn gốc thư mục images (cùng logic với UploadService để upload và xóa cùng vị trí).
+     */
+    private String getImagesRootPath() {
+        String rootPath = servletContext.getRealPath("/resources/images");
+        if (rootPath != null) {
+            return rootPath;
+        }
+        File fallback = new File(System.getProperty("user.dir"),
+                "src" + File.separator + "main" + File.separator + "webapp" + File.separator + "resources" + File.separator + "images");
+        if (fallback.exists()) {
+            return fallback.getAbsolutePath();
+        }
+        return null;
+    }
+
+    /**
      * Xóa file ảnh trong thư mục (cùng vị trí lưu với UploadService).
      *
      * @param fileName     tên file (vd: 1234567890-avatar.png)
@@ -28,7 +44,7 @@ public class ImageService {
         if (fileName == null || fileName.isEmpty()) {
             return true;
         }
-        String rootPath = servletContext.getRealPath("/resources/images");
+        String rootPath = getImagesRootPath();
         if (rootPath == null) {
             return false;
         }
@@ -37,6 +53,7 @@ public class ImageService {
         try {
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
+                return true;
             }
             return true;
         } catch (Exception e) {

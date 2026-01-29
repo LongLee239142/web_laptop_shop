@@ -178,6 +178,22 @@ public class UserController {
         return "redirect:/admin/user";
     }
 
+    @PostMapping("/admin/user/remove-avatar")
+    public String removeAvatar(@RequestParam("id") long userId, RedirectAttributes redirectAttributes) {
+        User userToUpdate = this.userService.getUserById(userId);
+        if (userToUpdate == null) {
+            return "redirect:/admin/user";
+        }
+        String oldAvatar = userToUpdate.getAvatar();
+        if (oldAvatar != null && !oldAvatar.isEmpty()) {
+            this.imageService.deleteImage(oldAvatar, "avatar");
+        }
+        userToUpdate.setAvatar(null);
+        this.userService.handleSaveUser(userToUpdate);
+        redirectAttributes.addFlashAttribute("successMessage", "Đã xóa ảnh đại diện.");
+        return "redirect:/admin/user/update/" + userId;
+    }
+
     @GetMapping("/admin/user/delete/{id}")
     public String getDeleteUserPage(Model model, @PathVariable long id) {
         model.addAttribute("id", id);

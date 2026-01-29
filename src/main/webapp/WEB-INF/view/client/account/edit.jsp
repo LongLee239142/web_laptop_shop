@@ -105,6 +105,11 @@
                                             <p class="text-muted small mb-0 mt-2" id="noAvatarHint">Chưa có ảnh. Chọn file bên trên để tải ảnh lên.</p>
                                         </c:if>
                                     </div>
+                                    <c:if test="${not empty user.avatar}">
+                                        <button type="button" class="btn btn-outline-danger btn-sm mt-2" id="btnRemoveAvatar" data-csrf-name="${_csrf.parameterName}" data-csrf-value="${_csrf.token}">
+                                            <i class="fas fa-trash-alt me-1"></i>Xóa ảnh đại diện
+                                        </button>
+                                    </c:if>
                                 </div>
 
                                 <div class="col-12 pt-2">
@@ -128,6 +133,26 @@
         document.addEventListener('DOMContentLoaded', function () {
             var spinner = document.getElementById('spinner');
             if (spinner) spinner.classList.remove('show');
+            var btnRemove = document.getElementById('btnRemoveAvatar');
+            if (btnRemove) {
+                btnRemove.onclick = function () {
+                    if (!confirm('Bạn có chắc muốn xóa ảnh đại diện?')) return;
+                    var form = document.createElement('form');
+                    form.method = 'post';
+                    form.action = '/account/remove-avatar';
+                    var csrfName = btnRemove.getAttribute('data-csrf-name');
+                    var csrfValue = btnRemove.getAttribute('data-csrf-value');
+                    if (csrfName && csrfValue) {
+                        var input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = csrfName;
+                        input.value = csrfValue;
+                        form.appendChild(input);
+                    }
+                    document.body.appendChild(form);
+                    form.submit();
+                };
+            }
         });
     </script>
 </body>

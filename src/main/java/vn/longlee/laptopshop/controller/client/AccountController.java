@@ -88,7 +88,7 @@ public class AccountController {
             return "redirect:/account";
         }
 
-        if (!file.isEmpty()) {
+        if (file != null && !file.isEmpty()) {
             String oldAvatar = userToUpdate.getAvatar();
             if (oldAvatar != null && !oldAvatar.isEmpty()) {
                 imageService.deleteImage(oldAvatar, "avatar");
@@ -96,6 +96,8 @@ public class AccountController {
             String avatar = uploadService.handleSaveUploadFile(file, "avatar");
             if (avatar != null && !avatar.isEmpty()) {
                 userToUpdate.setAvatar(avatar);
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Không thể tải ảnh lên. Vui lòng kiểm tra định dạng (PNG, JPG) và thử lại.");
             }
         } else if (formUser.getAvatar() != null && !formUser.getAvatar().isEmpty()) {
             userToUpdate.setAvatar(formUser.getAvatar());
@@ -112,7 +114,9 @@ public class AccountController {
         int sum = userToUpdate.getCart() == null ? 0 : userToUpdate.getCart().getSum();
         session.setAttribute("sum", sum);
 
-        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thông tin thành công!");
+        if (!redirectAttributes.getFlashAttributes().containsKey("errorMessage")) {
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thông tin thành công!");
+        }
         return "redirect:/account";
     }
 }

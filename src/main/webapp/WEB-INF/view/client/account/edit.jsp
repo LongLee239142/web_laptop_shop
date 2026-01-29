@@ -24,6 +24,7 @@
                 if (e.target.files && e.target.files[0]) {
                     var url = URL.createObjectURL(e.target.files[0]);
                     $("#avatarPreview").attr("src", url).css("display", "block");
+                    $("#noAvatarHint").hide();
                 }
             });
         });
@@ -61,7 +62,8 @@
                                 <form:hidden path="id" />
                                 <form:hidden path="email" />
                                 <form:hidden path="password" />
-                                <form:hidden path="avatar" />
+                                <c:if test="${not empty user.avatar}"><form:hidden path="avatar" /></c:if>
+                                <c:if test="${empty user.avatar}"><input type="hidden" name="avatar" value="" /></c:if>
 
                                 <div class="col-12">
                                     <label class="form-label text-muted">Email</label>
@@ -94,11 +96,14 @@
 
                                 <div class="col-12">
                                     <label class="form-label">Ảnh đại diện</label>
-                                    <input class="form-control" type="file" id="avatarFile" accept=".png,.jpg,.jpeg"
+                                    <input class="form-control" type="file" id="avatarFile" accept="image/png,image/jpeg,image/jpg,.png,.jpg,.jpeg"
                                         name="hoidanitFile" />
-                                    <div class="mt-2">
+                                    <div class="mt-2" id="avatarPreviewWrap">
                                         <img id="avatarPreview" alt="Preview" style="max-height: 180px; display: none;"
                                             class="rounded shadow" />
+                                        <c:if test="${empty user.avatar}">
+                                            <p class="text-muted small mb-0 mt-2" id="noAvatarHint">Chưa có ảnh. Chọn file bên trên để tải ảnh lên.</p>
+                                        </c:if>
                                     </div>
                                 </div>
 

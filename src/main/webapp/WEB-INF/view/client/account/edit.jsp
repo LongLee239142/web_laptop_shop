@@ -13,6 +13,96 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/client/css/bootstrap.min.css" rel="stylesheet">
     <link href="/client/css/style.css" rel="stylesheet">
+    <style>
+        /* Custom confirm modal */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        .confirm-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .confirm-box {
+            background: #fff;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+            transform: scale(0.9);
+            transition: transform 0.25s ease;
+            overflow: hidden;
+        }
+        .confirm-overlay.show .confirm-box {
+            transform: scale(1);
+        }
+        .confirm-box .confirm-header {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: #212529;
+            padding: 20px 24px;
+            text-align: center;
+        }
+        .confirm-box .confirm-header .confirm-icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            opacity: 0.95;
+        }
+        .confirm-box .confirm-header h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .confirm-box .confirm-body {
+            padding: 24px;
+            text-align: center;
+            color: #495057;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .confirm-box .confirm-footer {
+            padding: 16px 24px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            border-top: 1px solid #eee;
+            background: #f8f9fa;
+        }
+        .confirm-box .confirm-btn {
+            min-width: 100px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .confirm-box .confirm-btn:hover {
+            transform: translateY(-1px);
+        }
+        .confirm-box .confirm-btn-cancel {
+            background: #e9ecef;
+            color: #495057;
+        }
+        .confirm-box .confirm-btn-cancel:hover {
+            background: #dee2e6;
+        }
+        .confirm-box .confirm-btn-ok {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: #fff;
+        }
+        .confirm-box .confirm-btn-ok:hover {
+            box-shadow: 0 4px 14px rgba(220, 53, 69, 0.4);
+        }
+    </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
@@ -126,6 +216,23 @@
         </div>
     </div>
 
+    <!-- Custom confirm modal: xóa ảnh đại diện -->
+    <div id="confirmRemoveAvatarOverlay" class="confirm-overlay">
+        <div class="confirm-box">
+            <div class="confirm-header">
+                <div class="confirm-icon"><i class="fas fa-user-minus"></i></div>
+                <h4>Xóa ảnh đại diện</h4>
+            </div>
+            <div class="confirm-body">
+                Bạn có chắc muốn xóa ảnh đại diện?
+            </div>
+            <div class="confirm-footer">
+                <button type="button" class="confirm-btn confirm-btn-cancel" id="confirmRemoveAvatarCancel">Hủy</button>
+                <button type="button" class="confirm-btn confirm-btn-ok" id="confirmRemoveAvatarOk"><i class="fas fa-trash-alt me-1"></i>Xóa</button>
+            </div>
+        </div>
+    </div>
+
     <jsp:include page="../layout/footer.jsp" />
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -133,26 +240,49 @@
         document.addEventListener('DOMContentLoaded', function () {
             var spinner = document.getElementById('spinner');
             if (spinner) spinner.classList.remove('show');
+
+            var overlay = document.getElementById('confirmRemoveAvatarOverlay');
+            var btnCancel = document.getElementById('confirmRemoveAvatarCancel');
+            var btnOk = document.getElementById('confirmRemoveAvatarOk');
             var btnRemove = document.getElementById('btnRemoveAvatar');
+
+            function hideConfirm() {
+                if (overlay) overlay.classList.remove('show');
+            }
+
+            function submitRemoveAvatar() {
+                var form = document.createElement('form');
+                form.method = 'post';
+                form.action = '/account/remove-avatar';
+                var csrfName = btnRemove.getAttribute('data-csrf-name');
+                var csrfValue = btnRemove.getAttribute('data-csrf-value');
+                if (csrfName && csrfValue) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = csrfName;
+                    input.value = csrfValue;
+                    form.appendChild(input);
+                }
+                document.body.appendChild(form);
+                form.submit();
+            }
+
             if (btnRemove) {
                 btnRemove.onclick = function () {
-                    if (!confirm('Bạn có chắc muốn xóa ảnh đại diện?')) return;
-                    var form = document.createElement('form');
-                    form.method = 'post';
-                    form.action = '/account/remove-avatar';
-                    var csrfName = btnRemove.getAttribute('data-csrf-name');
-                    var csrfValue = btnRemove.getAttribute('data-csrf-value');
-                    if (csrfName && csrfValue) {
-                        var input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = csrfName;
-                        input.value = csrfValue;
-                        form.appendChild(input);
-                    }
-                    document.body.appendChild(form);
-                    form.submit();
+                    if (overlay) overlay.classList.add('show');
                 };
             }
+            if (btnCancel) btnCancel.onclick = hideConfirm;
+            if (btnOk) btnOk.onclick = function () { hideConfirm(); submitRemoveAvatar(); };
+
+            if (overlay) {
+                overlay.onclick = function (e) {
+                    if (e.target === overlay) hideConfirm();
+                };
+            }
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && overlay && overlay.classList.contains('show')) hideConfirm();
+            });
         });
     </script>
 </body>

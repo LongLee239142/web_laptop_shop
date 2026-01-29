@@ -44,6 +44,9 @@
                                         </li>
                                         <li><a class="dropdown-item" href="/account">Account Management</a></li>
                                         <li><a class="dropdown-item" href="/order-history">Purchase History</a></li>
+                                        <c:if test="${sessionScope.role == 'ADMIN'}">
+                                            <li><a class="dropdown-item" href="/admin"><i class="fas fa-cog me-2"></i>Quay về trang Admin</a></li>
+                                        </c:if>
                                         <li>
                                             <hr class="dropdown-divider">
                                         </li>

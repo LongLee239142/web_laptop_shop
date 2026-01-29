@@ -22,10 +22,10 @@
                     <div id="layoutSidenav_content">
                         <main>
                             <div class="container-fluid px-4">
-                                <h1 class="mt-4">Manage Product</h1>
+                                <h1 class="mt-4">Quản lý sản phẩm</h1>
                                 <ol class="breadcrumb mb-4">
                                     <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">Product</li>
+                                    <li class="breadcrumb-item active">Sản phẩm</li>
                                 </ol>
                                 <div class="mt-5">
                                     <!-- Alert Messages -->
@@ -47,75 +47,68 @@
                                     
                                     <div class="row">
                                         <div class="col-12 mx-auto">
-                                            <div class="d-flex justify-content-between">
-                                                <h3>Table Products</h3>
-                                                <a href="/admin/product/create" class="btn btn-primary">Create a
-                                                    Product</a>
+                                            <div class="card border-0 shadow-sm rounded-3">
+                                                <div class="card-header bg-white py-3 border-0 border-bottom">
+                                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                                        <h5 class="mb-0 fw-semibold"><i class="fas fa-laptop me-2 text-warning"></i>Danh sách sản phẩm</h5>
+                                                        <a href="/admin/product/create" class="btn btn-primary btn-sm">
+                                                            <i class="fas fa-plus me-1"></i>Thêm sản phẩm
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body p-0">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-striped align-middle mb-0">
+                                                            <thead class="table-dark">
+                                                                <tr>
+                                                                    <th class="text-center" style="width: 60px;">ID</th>
+                                                                    <th>Tên</th>
+                                                                    <th class="text-end" style="min-width: 140px;">Giá</th>
+                                                                    <th>Hãng</th>
+                                                                    <th class="text-center" style="width: 220px;">Thao tác</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <c:forEach var="product" items="${product_1}">
+                                                                    <tr>
+                                                                        <td class="text-center fw-semibold">${product.id}</td>
+                                                                        <td>${product.name}</td>
+                                                                        <td class="text-end fw-semibold text-success text-nowrap">
+                                                                            <fmt:formatNumber type="number" value="${product.price}" pattern="#,##0" /> đ
+                                                                        </td>
+                                                                        <td>${product.factory}</td>
+                                                                        <td class="text-center">
+                                                                            <a href="/admin/product/${product.id}" class="btn btn-sm btn-outline-success" title="Xem"><i class="fas fa-eye"></i></a>
+                                                                            <a href="/admin/product/update/${product.id}" class="btn btn-sm btn-outline-warning mx-1" title="Sửa"><i class="fas fa-edit"></i></a>
+                                                                            <a href="/admin/product/delete/${product.id}" class="btn btn-sm btn-outline-danger" title="Xóa"><i class="fas fa-trash-alt"></i></a>
+                                                                        </td>
+                                                                    </tr>
+                                                                </c:forEach>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <c:if test="${totalPage > 1}">
+                                                    <div class="card-footer bg-white border-0 py-3">
+                                                        <nav aria-label="Phân trang">
+                                                            <ul class="pagination pagination-sm justify-content-center mb-0">
+                                                                <li class="page-item ${currentPage eq 1 ? 'disabled' : ''}">
+                                                                    <a class="page-link" href="/admin/product?page=${currentPage - 1}" ${currentPage eq 1 ? 'tabindex="-1"' : ''}>Trước</a>
+                                                                </li>
+                                                                <c:forEach begin="1" end="${totalPage}" varStatus="loop">
+                                                                    <li class="page-item ${loop.index eq currentPage ? 'active' : ''}">
+                                                                        <a class="page-link" href="/admin/product?page=${loop.index}">${loop.index}</a>
+                                                                    </li>
+                                                                </c:forEach>
+                                                                <li class="page-item ${currentPage eq totalPage ? 'disabled' : ''}">
+                                                                    <a class="page-link" href="/admin/product?page=${currentPage + 1}" ${currentPage eq totalPage ? 'tabindex="-1"' : ''}>Sau</a>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
+                                                </c:if>
                                             </div>
-
-                                            <hr />
-                                            <table class=" table table-bordered table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Name</th>
-                                                        <th>Price</th>
-                                                        <th>Factory</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <c:forEach var="product" items="${product_1}">
-
-                                                        <tr>
-                                                            <th>${product.id}</th>
-                                                            <td>${product.name}</td>
-                                                            <td>
-                                                                <p class="mb-0 mt-4">
-                                                                    <fmt:formatNumber type="number"
-                                                                        value="${product.price}" 
-                                                                        pattern="#,##0" /> đ
-                                                                </p>
-                                                            </td>
-                                                            <td>${product.factory}</td>
-                                                            <td>
-                                                                <a href="/admin/product/${product.id}"
-                                                                    class="btn btn-success">View</a>
-                                                                <a href="/admin/product/update/${product.id}"
-                                                                    class="btn btn-warning  mx-2">Update</a>
-                                                                <a href="/admin/product/delete/${product.id}"
-                                                                    class="btn btn-danger">Delete</a>
-                                                            </td>
-                                                        </tr>
-
-                                                    </c:forEach>
-
-                                                </tbody>
-                                            </table>
-                                            <nav aria-label="Page navigation example">
-                                                <ul class="pagination justify-content-center">
-                                                    <li class="page-item ">
-                                                        <a class="${1 eq currentPage ? 'disabled page-link' : 'page-link'}"
-                                                            href="/admin/product?page=${currentPage - 1}" tabindex="-1"
-                                                            aria-disabled="true">Previous</a>
-                                                    </li>
-                                                    <c:if test="${totalPage > 0}">
-                                                        <c:forEach begin="0" end="${totalPage-1}" varStatus="loop">
-                                                            <li class="page-item">
-                                                                <a class="${(loop.index + 1) eq currentPage ? 'active page-link' : 'page-link'}"
-                                                                    href="/admin/product?page=${loop.index + 1}">${loop.index
-                                                                    + 1}</a>
-                                                            </li>
-                                                        </c:forEach>
-                                                    </c:if>
-                                                    <li>
-                                                        <a class="${totalPage eq currentPage ? 'disabled page-link' : 'page-link'}"
-                                                            href="/admin/product?page=${currentPage + 1}">Next</a>
-                                                    </li>
-                                                </ul>
-                                            </nav>
                                         </div>
-
                                     </div>
 
                                 </div>

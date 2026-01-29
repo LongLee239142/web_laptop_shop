@@ -10,8 +10,7 @@
             <meta name="description" content="LongLeeDev - Dự án laptopshop" />
             <meta name="author" content="LongLeeDev" />
             <title>Dashboard - LongLeeDev</title>
-            <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-            <link href="css/styles.css" rel="stylesheet" />
+            <link href="/css/styles.css" rel="stylesheet" />
             <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
         </head>
 
@@ -24,36 +23,66 @@
                         <div class="container-fluid px-4">
                             <h1 class="mt-4">Dashboard</h1>
                             <ol class="breadcrumb mb-4">
-                                <li class="breadcrumb-item active">Dashboard</li>
+                                <li class="breadcrumb-item active">Tổng quan</li>
                             </ol>
-                            <div class="row">
-                                <div class="col-xl-3 col-md-6">
-                                    <div class="card bg-primary text-white mb-4">
-                                        <div class="card-body">Số lượng User (${countUser})</div>
-                                        <div class="card-footer d-flex align-items-center justify-content-between">
-                                            <a class="small text-white stretched-link" href="/admin/user">View
-                                                Details</a>
-                                            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                            <div class="row g-4">
+                                <div class="col-xl-4 col-md-6">
+                                    <div class="card border-0 shadow-sm mb-4 overflow-hidden" style="border-radius: 12px;">
+                                        <div class="card-body bg-primary text-white d-flex align-items-center">
+                                            <div class="flex-shrink-0 me-3">
+                                                <div class="rounded-circle bg-white bg-opacity-25 p-3">
+                                                    <i class="fas fa-users fa-2x"></i>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h6 class="text-white-50 mb-1 text-uppercase small">Người dùng</h6>
+                                                <h3 class="mb-0 fw-bold">${countUser}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-primary bg-opacity-10 border-0 py-2">
+                                            <a class="small text-primary text-decoration-none fw-semibold stretched-link" href="/admin/user">
+                                                Xem chi tiết <i class="fas fa-arrow-right ms-1 small"></i>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xl-3 col-md-6">
-                                    <div class="card bg-warning text-white mb-4">
-                                        <div class="card-body">Số lượng Product (${countProduct})</div>
-                                        <div class="card-footer d-flex align-items-center justify-content-between">
-                                            <a class="small text-white stretched-link" href="/admin/product">View
-                                                Details</a>
-                                            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                <div class="col-xl-4 col-md-6">
+                                    <div class="card border-0 shadow-sm mb-4 overflow-hidden" style="border-radius: 12px;">
+                                        <div class="card-body bg-warning text-dark d-flex align-items-center">
+                                            <div class="flex-shrink-0 me-3">
+                                                <div class="rounded-circle bg-dark bg-opacity-10 p-3">
+                                                    <i class="fas fa-laptop fa-2x"></i>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h6 class="text-dark opacity-75 mb-1 text-uppercase small">Sản phẩm</h6>
+                                                <h3 class="mb-0 fw-bold">${countProduct}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-warning bg-opacity-10 border-0 py-2">
+                                            <a class="small text-dark text-decoration-none fw-semibold stretched-link" href="/admin/product">
+                                                Xem chi tiết <i class="fas fa-arrow-right ms-1 small"></i>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xl-3 col-md-6">
-                                    <div class="card bg-success text-white mb-4">
-                                        <div class="card-body">Số lượng Order (${countOrder})</div>
-                                        <div class="card-footer d-flex align-items-center justify-content-between">
-                                            <a class="small text-white stretched-link" href="/admin/order">View
-                                                Details</a>
-                                            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                <div class="col-xl-4 col-md-6">
+                                    <div class="card border-0 shadow-sm mb-4 overflow-hidden" style="border-radius: 12px;">
+                                        <div class="card-body bg-success text-white d-flex align-items-center">
+                                            <div class="flex-shrink-0 me-3">
+                                                <div class="rounded-circle bg-white bg-opacity-25 p-3">
+                                                    <i class="fas fa-shopping-cart fa-2x"></i>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h6 class="text-white-50 mb-1 text-uppercase small">Đơn hàng</h6>
+                                                <h3 class="mb-0 fw-bold">${countOrder}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-success bg-opacity-10 border-0 py-2">
+                                            <a class="small text-success text-decoration-none fw-semibold stretched-link" href="/admin/order">
+                                                Xem chi tiết <i class="fas fa-arrow-right ms-1 small"></i>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -65,14 +94,7 @@
             </div>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
                 crossorigin="anonymous"></script>
-            <script src="js/scripts.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
-                crossorigin="anonymous"></script>
-            <script src="js/chart-area-demo.js"></script>
-            <script src="js/chart-bar-demo.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
-                crossorigin="anonymous"></script>
-            <script src="js/datatables-simple-demo.js"></script>
+            <script src="/js/scripts.js"></script>
         </body>
 
         </html>

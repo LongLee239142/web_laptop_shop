@@ -204,7 +204,7 @@ public class ProductService {
 
     }
 
-    public void handlePlaceOrder(User user, HttpSession session,
+    public Order handlePlaceOrder(User user, HttpSession session,
             String receiverName, String receiverAddress, String receiverPhone) {
         Order order = new Order();
         order.setUser(user);
@@ -241,6 +241,6 @@ public class ProductService {
                 session.setAttribute("sum", 0);
             }
         }
-
+        return order;
     }
 }

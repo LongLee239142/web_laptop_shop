@@ -132,12 +132,14 @@ public class UserController {
     }
 
     @PostMapping("/admin/user/update")
-    public String postUpdateUser(Model model, @ModelAttribute("newUser") @Valid User mrlee,
-            BindingResult newUserBindingResult,
+    public String postUpdateUser(Model model,
             @RequestParam("hoidanitFile") MultipartFile file,
+            @ModelAttribute("newUser") @Valid User mrlee,
+            BindingResult newUserBindingResult,
             RedirectAttributes redirectAttributes) {
         // validate
         if (newUserBindingResult.hasErrors()) {
+            model.addAttribute("newUser", mrlee);
             return "admin/user/update";
         }
         
@@ -154,8 +156,16 @@ public class UserController {
             }
             
             if (!file.isEmpty()) {
+                String oldAvatar = currentUser.getAvatar();
+                if (oldAvatar != null && !oldAvatar.isEmpty()) {
+                    this.imageService.deleteImage(oldAvatar, "avatar");
+                }
                 String avatar = this.uploadService.handleSaveUploadFile(file, "avatar");
-                currentUser.setAvatar(avatar);
+                if (avatar != null && !avatar.isEmpty()) {
+                    currentUser.setAvatar(avatar);
+                }
+            } else if (mrlee.getAvatar() != null && !mrlee.getAvatar().isEmpty()) {
+                currentUser.setAvatar(mrlee.getAvatar());
             }
             currentUser.setAddress(mrlee.getAddress());
             currentUser.setFullName(mrlee.getFullName());
@@ -166,6 +176,22 @@ public class UserController {
             redirectAttributes.addFlashAttribute("successMessage", "Cập nhật người dùng thành công!");
         }
         return "redirect:/admin/user";
+    }
+
+    @PostMapping("/admin/user/remove-avatar")
+    public String removeAvatar(@RequestParam("id") long userId, RedirectAttributes redirectAttributes) {
+        User userToUpdate = this.userService.getUserById(userId);
+        if (userToUpdate == null) {
+            return "redirect:/admin/user";
+        }
+        String oldAvatar = userToUpdate.getAvatar();
+        if (oldAvatar != null && !oldAvatar.isEmpty()) {
+            this.imageService.deleteImage(oldAvatar, "avatar");
+        }
+        userToUpdate.setAvatar(null);
+        this.userService.handleSaveUser(userToUpdate);
+        redirectAttributes.addFlashAttribute("successMessage", "Đã xóa ảnh đại diện.");
+        return "redirect:/admin/user/update/" + userId;
     }
 
     @GetMapping("/admin/user/delete/{id}")

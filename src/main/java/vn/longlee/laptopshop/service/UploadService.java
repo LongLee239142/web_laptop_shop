@@ -20,11 +20,26 @@ public class UploadService {
         this.servletContext = servletContext;
     }
 
+    private String getImagesRootPath() {
+        String rootPath = this.servletContext.getRealPath("/resources/images");
+        if (rootPath != null) {
+            return rootPath;
+        }
+        File fallback = new File(System.getProperty("user.dir"),
+                "src" + File.separator + "main" + File.separator + "webapp" + File.separator + "resources" + File.separator + "images");
+        if (fallback.exists()) {
+            return fallback.getAbsolutePath();
+        }
+        return rootPath;
+    }
+
     public String handleSaveUploadFile(MultipartFile file, String targetFolder) {
         if (file.isEmpty())
             return "";
-        // relative path: absolute path
-        String rootPath = this.servletContext.getRealPath("/resources/images");
+        String rootPath = getImagesRootPath();
+        if (rootPath == null) {
+            return "";
+        }
         String finalName = "";
         try {
             byte[] bytes = file.getBytes();

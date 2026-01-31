@@ -22,10 +22,10 @@
                     <div id="layoutSidenav_content">
                         <main>
                             <div class="container-fluid px-4">
-                                <h1 class="mt-4">Manage Order</h1>
+                                <h1 class="mt-4">Quản lý đơn hàng</h1>
                                 <ol class="breadcrumb mb-4">
                                     <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-                                    <li class="breadcrumb-item active">Order</li>
+                                    <li class="breadcrumb-item active">Đơn hàng</li>
                                 </ol>
                                 <div class="mt-5">
                                     <!-- Alert Messages -->
@@ -47,76 +47,73 @@
                                     
                                     <div class="row">
                                         <div class="col-12 mx-auto">
-
-                                            <hr />
-                                            <table class=" table table-bordered table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ID</th>
-                                                        <th>Total Price</th>
-                                                        <th>User</th>
-                                                        <th>Status</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                <c:if test="${ empty orders}">
-                                                    <tr>
-                                                        <td colspan="6">
-                                                            Không có đơn nào cả
-                                                        </td>
-                                                    </tr>
+                                            <div class="card border-0 shadow-sm rounded-3">
+                                                <div class="card-header bg-white py-3 border-0 border-bottom">
+                                                    <h5 class="mb-0 fw-semibold"><i class="fas fa-shopping-cart me-2 text-success"></i>Danh sách đơn hàng</h5>
+                                                </div>
+                                                <div class="card-body p-0">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-striped align-middle mb-0">
+                                                            <thead class="table-dark">
+                                                                <tr>
+                                                                    <th class="text-center" style="width: 60px;">ID</th>
+                                                                    <th class="text-end" style="width: 120px;">Tổng tiền</th>
+                                                                    <th>Khách hàng</th>
+                                                                    <th class="text-center" style="width: 100px;">Trạng thái</th>
+                                                                    <th class="text-center" style="width: 220px;">Thao tác</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <c:if test="${empty orders}">
+                                                                    <tr>
+                                                                        <td colspan="5" class="text-center py-4 text-muted">
+                                                                            Chưa có đơn hàng nào
+                                                                        </td>
+                                                                    </tr>
+                                                                </c:if>
+                                                                <c:forEach var="order" items="${orders}">
+                                                                    <tr>
+                                                                        <td class="text-center fw-semibold">${order.id}</td>
+                                                                        <td class="text-end fw-semibold text-success" style="white-space: nowrap;">
+                                                                            <fmt:formatNumber type="number" value="${order.totalPrice}" pattern="#,##0" />&#8239;đ
+                                                                        </td>
+                                                                        <td>${order.user.fullName}</td>
+                                                                        <td class="text-center">
+                                                                            <span class="badge bg-info text-dark">${order.status}</span>
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                            <a href="/admin/order/${order.id}" class="btn btn-sm btn-outline-success" title="Xem"><i class="fas fa-eye"></i></a>
+                                                                            <a href="/admin/order/update/${order.id}" class="btn btn-sm btn-outline-warning mx-1" title="Cập nhật"><i class="fas fa-edit"></i></a>
+                                                                            <a href="/admin/order/delete/${order.id}" class="btn btn-sm btn-outline-danger" title="Xóa"><i class="fas fa-trash-alt"></i></a>
+                                                                        </td>
+                                                                    </tr>
+                                                                </c:forEach>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <c:if test="${totalPage > 1}">
+                                                    <div class="card-footer bg-white border-0 py-3">
+                                                        <nav aria-label="Phân trang">
+                                                            <ul class="pagination pagination-sm justify-content-center mb-0">
+                                                                <li class="page-item ${currentPage eq 1 ? 'disabled' : ''}">
+                                                                    <a class="page-link" href="/admin/order?page=${currentPage - 1}" ${currentPage eq 1 ? 'tabindex="-1"' : ''}>Trước</a>
+                                                                </li>
+                                                                <c:forEach begin="1" end="${totalPage}" varStatus="loop">
+                                                                    <li class="page-item ${loop.index eq currentPage ? 'active' : ''}">
+                                                                        <a class="page-link" href="/admin/order?page=${loop.index}">${loop.index}</a>
+                                                                    </li>
+                                                                </c:forEach>
+                                                                <li class="page-item ${currentPage eq totalPage ? 'disabled' : ''}">
+                                                                    <a class="page-link" href="/admin/order?page=${currentPage + 1}" ${currentPage eq totalPage ? 'tabindex="-1"' : ''}>Sau</a>
+                                                                </li>
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
                                                 </c:if>
-                                                    <c:forEach var="order" items="${orders}">
-
-                                                        <tr>
-                                                            <th>${order.id}</th>
-                                                            <td>
-                                                                <fmt:formatNumber type="number"
-                                                                    value="${order.totalPrice}" /> đ
-                                                            </td>
-                                                            <td>${order.user.fullName}</td>
-                                                            <td>${order.status}</td>
-                                                            <td>
-                                                                <a href="/admin/order/${order.id}"
-                                                                    class="btn btn-success">View</a>
-                                                                <a href="/admin/order/update/${order.id}"
-                                                                    class="btn btn-warning  mx-2">Update</a>
-                                                                <a href="/admin/order/delete/${order.id}"
-                                                                    class="btn btn-danger">Delete</a>
-                                                            </td>
-                                                        </tr>
-
-                                                    </c:forEach>
-
-                                                </tbody>
-                                            </table>
-                                            <nav aria-label="Page navigation example">
-                                                <ul class="pagination justify-content-center">
-                                                    <li class="page-item ">
-                                                        <a class="${1 eq currentPage ? 'disabled page-link' : 'page-link'}"
-                                                            href="/admin/order?page=${currentPage - 1}" tabindex="-1"
-                                                            aria-disabled="true">Previous</a>
-                                                    </li>
-                                                    <c:if test="${totalPage > 0}">
-                                                        <c:forEach begin="0" end="${totalPage-1}" varStatus="loop">
-                                                            <li class="page-item">
-                                                                <a class="${(loop.index + 1) eq currentPage ? 'active page-link' : 'page-link'}"
-                                                                    href="/admin/order?page=${loop.index + 1}">${loop.index
-                                                                    + 1}</a>
-                                                            </li>
-                                                        </c:forEach>
-                                                    </c:if>
-                                                    <li>
-                                                        <a class="${totalPage eq currentPage ? 'disabled page-link' : 'page-link'}"
-                                                            href="/admin/order?page=${currentPage + 1}">Next</a>
-                                                    </li>
-                                                </ul>
-                                            </nav>
+                                            </div>
                                         </div>
-
                                     </div>
-
                                 </div>
                             </div>
                         </main>

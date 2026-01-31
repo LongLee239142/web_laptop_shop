@@ -48,14 +48,14 @@
 
                     <jsp:include page="../layout/header.jsp" />
 
-                    <!-- Cart Page Start -->
-                    <div class="container-fluid py-5">
-                        <div class="container py-5">
-                            <div class="mb-3">
+                    <!-- Cart Page Start (padding-top để tránh breadcrumb sát vạch chân header) -->
+                    <div class="container-fluid pt-5 pb-5 mt-4">
+                        <div class="container py-4">
+                            <div class="mb-4 py-3">
                                 <nav aria-label="breadcrumb">
-                                    <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><a href="/">Home</a></li>
-                                        <li class="breadcrumb-item active" aria-current="page">Chi Tiết Giỏ Hàng</li>
+                                    <ol class="breadcrumb mb-0 fs-6">
+                                        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-primary">Trang chủ</a></li>
+                                        <li class="breadcrumb-item active text-muted" aria-current="page">Chi tiết giỏ hàng</li>
                                     </ol>
                                 </nav>
                             </div>

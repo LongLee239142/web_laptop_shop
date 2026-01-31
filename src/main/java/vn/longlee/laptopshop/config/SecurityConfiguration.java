@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
 
 import jakarta.servlet.DispatcherType;
@@ -47,9 +48,15 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    public SessionRoleSyncFilter sessionRoleSyncFilter() {
+        return new SessionRoleSyncFilter();
+    }
+
+    @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // v6. lamda
         http
+                .addFilterAfter(sessionRoleSyncFilter(), SecurityContextHolderFilter.class)
 
                 .authorizeHttpRequests(authorize -> authorize
                         .dispatcherTypeMatchers(DispatcherType.FORWARD,

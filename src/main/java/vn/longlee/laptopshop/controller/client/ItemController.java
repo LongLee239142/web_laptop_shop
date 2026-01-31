@@ -27,10 +27,12 @@ import vn.longlee.laptopshop.domain.Product;
 import vn.longlee.laptopshop.domain.Product_;
 import vn.longlee.laptopshop.domain.User;
 import vn.longlee.laptopshop.domain.dto.ProductCriteriaDTO;
+import vn.longlee.laptopshop.service.EmailService;
 import vn.longlee.laptopshop.service.ProductService;
 import vn.longlee.laptopshop.service.UserService;
 import vn.longlee.laptopshop.service.VNPayService;
 import vn.longlee.laptopshop.service.MoMoService;
+import vn.longlee.laptopshop.domain.Order;
 
 @Controller
 public class ItemController {
@@ -38,12 +40,14 @@ public class ItemController {
     private final UserService userService;
     private final VNPayService vnPayService;
     private final MoMoService moMoService;
+    private final EmailService emailService;
 
-    public ItemController(ProductService productService, UserService userService, VNPayService vnPayService, MoMoService moMoService) {
+    public ItemController(ProductService productService, UserService userService, VNPayService vnPayService, MoMoService moMoService, EmailService emailService) {
         this.productService = productService;
         this.userService = userService;
         this.vnPayService = vnPayService;
         this.moMoService = moMoService;
+        this.emailService = emailService;
     }
 
     @GetMapping("/product/{id}")
@@ -149,8 +153,19 @@ public class ItemController {
         HttpSession session = request.getSession(false);
         long id = (long) session.getAttribute("id");
         currentUser.setId(id);
-        this.productService.handlePlaceOrder(currentUser, session,
+        Order order = this.productService.handlePlaceOrder(currentUser, session,
                 receiverName, receiverAddress, receiverPhone);
+        // Gửi email xác nhận đơn hàng COD cho khách hàng
+        String customerEmail = (String) session.getAttribute("email");
+        if (customerEmail != null && !customerEmail.isBlank()) {
+            try {
+                emailService.sendOrderConfirmationEmail(customerEmail, order.getId(),
+                        order.getTotalPrice(), order.getReceiverName(), order.getReceiverAddress(),
+                        order.getReceiverPhone());
+            } catch (Exception e) {
+                System.err.println("Không gửi được email xác nhận đơn hàng: " + e.getMessage());
+            }
+        }
         return "redirect:/thanks";
     }
 

@@ -15,7 +15,9 @@ import vn.longlee.laptopshop.service.UserService;
 @Controller
 public class DashboardController {
     private static final int RECENT_ORDERS_LIMIT = 10;
-    /** Ngưỡng 1 tỷ VND: từ đây trở lên hiển thị dạng "X.XX tỷ đ". */
+    /** 1 triệu VND: hiển thị dạng "X M đ". */
+    private static final double ONE_MILLION = 1_000_000;
+    /** 1 tỷ VND: hiển thị dạng "X B đ". */
     private static final double ONE_BILLION = 1_000_000_000;
 
     public final OrderService orderService;
@@ -43,14 +45,27 @@ public class DashboardController {
     }
 
     /**
-     * Chuỗi hiển thị doanh thu: nếu >= 1 tỷ thì dạng "X.XX tỷ đ", còn lại dạng "X,XXX,XXX đ".
+     * Chuỗi hiển thị doanh thu: >= 1 tỷ → "X B", >= 1 triệu → "X M", còn lại số đầy đủ + " đ".
      */
     private String formatRevenueDisplay(double amount) {
         if (amount >= ONE_BILLION) {
-            return String.format(Locale.US, "%.2f tỷ đ", amount / ONE_BILLION);
+            double value = amount / ONE_BILLION;
+            return formatShortValue(value) + " B";
+        }
+        if (amount >= ONE_MILLION) {
+            double value = amount / ONE_MILLION;
+            return formatShortValue(value) + " M";
         }
         DecimalFormat df = new DecimalFormat("#,##0", new DecimalFormatSymbols(Locale.US));
         return df.format(Math.round(amount)) + " đ";
+    }
+
+    /** Số dạng X hoặc X.XX (bỏ .00 khi là số nguyên). */
+    private String formatShortValue(double value) {
+        if (value == Math.floor(value)) {
+            return String.format(Locale.US, "%.0f", value);
+        }
+        return String.format(Locale.US, "%.2f", value);
     }
 
     /**

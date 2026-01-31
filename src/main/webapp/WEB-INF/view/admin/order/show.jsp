@@ -74,8 +74,8 @@
                                                                 <c:forEach var="order" items="${orders}">
                                                                     <tr>
                                                                         <td class="text-center fw-semibold">${order.id}</td>
-                                                                        <td class="text-end fw-semibold text-success">
-                                                                            <fmt:formatNumber type="number" value="${order.totalPrice}" pattern="#,##0" /> đ
+                                                                        <td class="text-end fw-semibold text-success" style="white-space: nowrap;">
+                                                                            <fmt:formatNumber type="number" value="${order.totalPrice}" pattern="#,##0" />&#8239;đ
                                                                         </td>
                                                                         <td>${order.user.fullName}</td>
                                                                         <td class="text-center">

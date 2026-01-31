@@ -1,6 +1,7 @@
 package vn.longlee.laptopshop.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -24,4 +25,7 @@ public interface ChatHistoryRepository extends JpaRepository<ChatHistory, Long> 
     @Transactional
     @Query("DELETE FROM ChatHistory ch WHERE ch.user = :user")
     void deleteByUser(@Param("user") User user);
+
+    /** Lấy 1 tin nhắn gần nhất của user (để dùng làm ngữ cảnh cho câu hỏi tiếp theo). */
+    Optional<ChatHistory> findTop1ByUserOrderByTimestampDesc(User user);
 } 

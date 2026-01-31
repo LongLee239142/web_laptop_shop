@@ -14,6 +14,10 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Entity ánh xạ bảng products.
+ * Quan hệ: Product (1) ----< CartDetail (N) và OrderDetail (N); FK nằm ở cart_detail.product_id, order_detail.product_id.
+ */
 @Entity
 @Table(name = "products")
 public class Product {
@@ -46,6 +50,7 @@ public class Product {
     private String factory;
     private String target;
 
+    /** 1-N với CartDetail: FK product_id nằm ở bảng cart_detail, nên dùng mappedBy */
     @OneToMany(mappedBy = "product")
     private List<CartDetail> cartDetails;
 

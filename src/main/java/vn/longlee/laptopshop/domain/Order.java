@@ -11,6 +11,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+/**
+ * Entity ánh xạ bảng orders.
+ * Quan hệ: Order (N) ----> User (1) qua user_id; Order (1) ----< OrderDetail (N) qua mappedBy.
+ */
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -28,11 +32,12 @@ public class Order {
 
     private String status;
 
-    // user id
+    /** N-1 với User: bảng orders có cột user_id (FK) trỏ tới users.id */
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
+    /** 1-N với OrderDetail: FK order_id nằm ở bảng order_detail, nên dùng mappedBy */
     @OneToMany(mappedBy = "order")
     List<OrderDetail> orderDetails;
 

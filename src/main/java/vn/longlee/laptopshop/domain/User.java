@@ -15,6 +15,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Entity ánh xạ bảng users.
+ * Quan hệ:
+ * - User (N) ----> Role (1): role_id
+ * - User (1) ----< Order (N): mappedBy user
+ * - User (1) ----< Cart (1): mappedBy user
+ */
 @Entity
 @Table(name = "users")
 public class User {
@@ -39,15 +46,16 @@ public class User {
 
     private String avatar;
 
-    // roleId
-    // User many -> to one -> role
+    /** N-1 với Role: bảng users có cột role_id (FK) trỏ tới roles.id */
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
 
+    /** 1-N với Order: FK user_id nằm ở bảng orders, nên dùng mappedBy */
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
 
+    /** 1-1 với Cart: FK user_id nằm ở bảng carts, nên dùng mappedBy */
     @OneToOne(mappedBy = "user")
     private Cart cart;
 

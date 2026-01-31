@@ -9,6 +9,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+/**
+ * Entity ánh xạ bảng roles.
+ * Quan hệ: Role (1) ----< User (N).
+ * Một role có nhiều user; phía User giữ FK role_id nên dùng mappedBy.
+ */
 @Entity
 @Table(name = "roles")
 public class Role {
@@ -20,7 +25,7 @@ public class Role {
 
     private String description;
 
-    // role - one => many - users . ctrl + k . press 's'
+    /** Quan hệ 1-N với User. mappedBy = "role" = FK nằm ở entity User (cột role_id). */
     @OneToMany(mappedBy = "role")
     private List<User> users;
 

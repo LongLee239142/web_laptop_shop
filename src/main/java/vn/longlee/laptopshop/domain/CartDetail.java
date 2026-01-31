@@ -8,6 +8,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+/**
+ * Entity ánh xạ bảng cart_detail (chi tiết giỏ hàng).
+ * Quan hệ: CartDetail (N) ----> Cart (1) qua cart_id; CartDetail (N) ----> Product (1) qua product_id.
+ */
 @Entity
 @Table(name = "cart_detail")
 public class CartDetail {
@@ -19,12 +23,12 @@ public class CartDetail {
 
     private double price;
 
-    // cart_id : long
+    /** N-1 với Cart: bảng cart_detail có cột cart_id (FK) trỏ tới carts.id */
     @ManyToOne
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
-    // product_id:long
+    /** N-1 với Product: bảng cart_detail có cột product_id (FK) trỏ tới products.id */
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;

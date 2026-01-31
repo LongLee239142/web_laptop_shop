@@ -11,6 +11,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import vn.longlee.laptopshop.domain.User;
 
+/**
+ * Entity ánh xạ bảng password_reset_tokens (token khôi phục mật khẩu).
+ * Quan hệ: PasswordResetToken (N) ----> User (1) qua user_id (bắt buộc).
+ */
 @Entity
 @Table(name = "password_reset_tokens")
 public class PasswordResetToken {
@@ -20,6 +24,7 @@ public class PasswordResetToken {
 
     private String token;
 
+    /** N-1 với User: bảng password_reset_tokens có cột user_id (FK) trỏ tới users.id; nullable = false */
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

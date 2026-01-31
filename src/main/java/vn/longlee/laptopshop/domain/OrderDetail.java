@@ -8,6 +8,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+/**
+ * Entity ánh xạ bảng order_detail (chi tiết đơn hàng).
+ * Quan hệ: OrderDetail (N) ----> Order (1) qua order_id; OrderDetail (N) ----> Product (1) qua product_id.
+ */
 @Entity
 @Table(name = "order_detail")
 public class OrderDetail {
@@ -18,12 +22,12 @@ public class OrderDetail {
     private long quantity;
     private double price;
 
-    // order_id: long
+    /** N-1 với Order: bảng order_detail có cột order_id (FK) trỏ tới orders.id */
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
 
-    // product_id: long
+    /** N-1 với Product: bảng order_detail có cột product_id (FK) trỏ tới products.id */
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;

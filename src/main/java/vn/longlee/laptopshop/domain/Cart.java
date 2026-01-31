@@ -12,6 +12,10 @@ import jakarta.validation.constraints.Min;
 
 import java.util.List;
 
+/**
+ * Entity ánh xạ bảng carts.
+ * Quan hệ: Cart (N) ----> User (1) qua user_id; Cart (1) ----< CartDetail (N) qua mappedBy.
+ */
 @Entity
 @Table(name = "carts")
 public class Cart {
@@ -22,12 +26,12 @@ public class Cart {
     @Min(value = 0)
     private int sum;
 
-    // user id
+    /** N-1 với User: bảng carts có cột user_id (FK) trỏ tới users.id */
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    // cart_detail_id
+    /** 1-N với CartDetail: FK cart_id nằm ở bảng cart_detail, nên dùng mappedBy */
     @OneToMany(mappedBy = "cart")
     List<CartDetail> cartDetails;
 

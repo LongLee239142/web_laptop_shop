@@ -11,6 +11,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import vn.longlee.laptopshop.domain.User;
 
+/**
+ * Entity ánh xạ bảng chat_history (lịch sử chatbot).
+ * Quan hệ: ChatHistory (N) ----> User (1) qua user_id. user_id có thể null (khách chưa đăng nhập).
+ */
 @Entity
 @Table(name = "chat_history")
 public class ChatHistory {
@@ -23,7 +27,7 @@ public class ChatHistory {
     private String botResponse;
     private LocalDateTime timestamp;
     
-    // Quan hệ với User - có thể null nếu user chưa đăng nhập
+    /** N-1 với User: bảng chat_history có cột user_id (FK) trỏ tới users.id; có thể null */
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
